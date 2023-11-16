@@ -1,0 +1,37 @@
+html {
+  scroll-behavior: smooth;
+}
+ 
+.btn-lg:hover {
+  animation: bubble 1s ease-in-out infinite;
+}
+.btn-lg{
+  text-shadow: 0.5px 0px 0.5px #fff;
+}
+@keyframes bubble {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+/* Custom CSS to style the spinner */
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #3498db; /* Adjust the spinner color as needed */
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  animation: spin 2s linear infinite;
+  margin: 0 auto;
+  display: none; /* Hide the spinner by default */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
