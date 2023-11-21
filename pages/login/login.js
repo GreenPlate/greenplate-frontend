@@ -3,6 +3,7 @@ import { handleHttpErrors } from '../../utility.js'
 
 
 export function initLogin(match) {
+  document.querySelector('#login-fail').innerText = "";
   document.querySelector('#login-btn').addEventListener("click", login)
 }
 
@@ -10,6 +11,7 @@ async function login() {
     document.querySelector("#login-fail").innerText = ""
     const userNameInput = document.querySelector('#username') 
     const passwordInput = document.querySelector('#password')
+    
     const loginRequest = {
       username: userNameInput.value,  
       password: passwordInput.value
@@ -24,7 +26,12 @@ async function login() {
       storeLoginDetails(res)
       window.router.navigate("/")
     } catch (err) {
-      document.querySelector('#login-fail').innerText = err.message
+      console.log(err.message)
+      if(err.message === "Incorrect username or password"){
+        document.querySelector('#login-fail').innerText = "Forkert brugernavn eller kodeord."
+      }
+      
+
     }
   }
   
@@ -34,6 +41,7 @@ async function login() {
     localStorage.setItem("roles", res.roles)
     toggleLoginStatus(true)
   }
+
   export function logout() {
   localStorage.removeItem("token")
   localStorage.removeItem("user")
@@ -49,17 +57,22 @@ export function toggleLoginStatus(loggedIn) {
   
   const adminListItems = document.querySelectorAll('.admin-only');
   const userRoutes = document.querySelector('.user-only');
+  
   let isAdmin = false;
   let isUser = false;
   if (localStorage.getItem('roles')) {
      isAdmin = localStorage.getItem('roles').includes('ADMIN');
      isUser = localStorage.getItem('roles').includes('USER');
   }
+  
   for (var i = 0; i < adminListItems.length; i++) {
     adminListItems[i].style.display = isAdmin ? "block" : 'none'; // or any other value you want
   }
-  userRoutes.style.display = isUser ? 'block' : 'none';
+  
+  for (var i = 0; i < userRoutes.length; i++) {
+    userRoutes[i].style.display = isUser ? "block" : 'none'; // or any other value you want
+  }
+
+  //userRoutes.style.display = isUser ? 'block' : 'none';
   
 }
-
-  
