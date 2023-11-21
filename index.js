@@ -16,6 +16,7 @@ window.addEventListener("load", async () => {
   const templateStores = await loadHtml("./pages/stores/stores.html");
   const templateLogin = await loadHtml("./pages/login/login.html");
   const templateFoodplan = await loadHtml("./pages/foodplan/foodplan.html");
+  const templateOffers = await loadHtml("./pages/offers/offers.html");
 
   //If token existed, for example after a refresh, set UI accordingly
   const token = localStorage.getItem("token");
@@ -58,7 +59,7 @@ window.addEventListener("load", async () => {
       },
       "/offers": (match)=>{
         renderHtml(templateOffers, "content");
-        initOffersplan(match);
+        initOffers(match);
       },
     })
     .notFound(() => {
