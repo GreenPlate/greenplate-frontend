@@ -4,7 +4,7 @@ import { handleHttpErrors, makeOptions, sanitizeStringWithTableRows } from "./..
 const URL=API_URL+"/stores/foodwaste"
 export async function initOffers(match){
     const storeId = match.params.storeid;
- console.log(storeId);
+
  await getOffers(storeId);
  //document.querySelector("#offercard")
 }
