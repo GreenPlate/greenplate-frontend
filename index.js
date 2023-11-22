@@ -20,7 +20,7 @@ window.addEventListener("load", async () => {
 
   //If token existed, for example after a refresh, set UI accordingly
   const token = localStorage.getItem("token");
-  //toggleLoginStatus(token);
+  toggleLoginStatus(token);
 
   const router = new Navigo("/", { hash: true });
   window.router = router;
