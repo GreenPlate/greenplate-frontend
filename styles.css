@@ -107,8 +107,12 @@ html {
   100% { transform: rotate(360deg); }
 }
 
-.card-title {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.card{
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+  text-shadow: 0.5px 0px 0.5px #fff;
+}
+
+.card:hover {
+  transform: scale(1.05);
 }

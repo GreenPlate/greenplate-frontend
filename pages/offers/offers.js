@@ -16,20 +16,23 @@ const offersRow= clearances.map(clearance => `
 
     <div class="card mx-2 mt-2 d-flex align-items-center  justify-content-center shadow-sm p-3 mb-5 bg-body-tertiary rounded" style="width: 18rem" >
         <div class="col-md-4 d-flex align-items-center  justify-content-center">
-                <img src="${clearance.product.image}"  class="card-img-top " alt="product picture" style="width: 18rem; height: 150px; overflow: ignore;">
+                <img src="${clearance.product.image}"  class="card-img-top " alt="product picture" style="width: 17rem; height: 150px; overflow: ignore;">
         </div>    
             <div class="card-body">
-                <h5 class="card-title">${clearance.product.description}</h5>
+                <div class="h-25">
+                <h5 class="card-title ">${clearance.product.description}</h5>
+                </div>
                 <p class="card-text"> original pris: ${clearance.offer.originalPrice} <br>
                 ny pris: ${clearance.offer.newPrice} <br>
                 rabat: ${clearance.offer.discount} <br>
                 ${clearance.product.ean} </p>
                 
-                <div class="form-check form-check-reverse">
-                    <input class="form-check-input" type="checkbox" value="" id="reverseCheck1">
-                    <label class="form-check-label" for="reverseCheck1">
-                    vælg denne vare
-                    </label>
+                <div class="form-check form-check-reverse ">
+                <label class="form-check-label p-2" for="reverseCheck1"><p>Vælg vare </p></label>
+                    <input class="form-check-input" type="checkbox" value="" id="reverseCheck1" style="height:30px; width:30px;">
+                    
+                    
+                   
                 </div>
             </div>
        
