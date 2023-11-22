@@ -16,7 +16,7 @@ const offersRow= clearances.map(clearance => `
 
     <div class="card mx-2 mt-2 d-flex align-items-center  justify-content-center shadow-sm p-3 mb-5 bg-body-tertiary rounded" style="width: 18rem" >
         <div class="col-md-4 d-flex align-items-center  justify-content-center">
-                <img src="${clearance.product.image}"  class="card-img-top " alt="product picture" style="width: 17rem; height: 150px; overflow: ignore;">
+                <img src="${clearance.product.image}"  class="card-img-top " alt="Not found" onerror="this.src='/images/PlaceholderProductImage.jpg';" style="width: 17rem; height: 150px; overflow: ignore;">
         </div>    
             <div class="card-body">
                 <div class="h-25">
