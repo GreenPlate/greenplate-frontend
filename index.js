@@ -7,6 +7,7 @@ import { initStores } from "./pages/stores/stores.js";
 import { initSignup } from "./pages/signup/signup.js";
 import { initLogin, toggleLoginStatus, logout } from "./pages/login/login.js";
 import { initFoodplan } from "./pages/foodplan/foodplan.js";
+import {initOffers} from "./pages/offers/offers.js";
 
 window.addEventListener("load", async () => {
   const templateHome = await loadHtml("./pages/home/home.html");
@@ -15,6 +16,7 @@ window.addEventListener("load", async () => {
   const templateStores = await loadHtml("./pages/stores/stores.html");
   const templateLogin = await loadHtml("./pages/login/login.html");
   const templateFoodplan = await loadHtml("./pages/foodplan/foodplan.html");
+  const templateOffers = await loadHtml("./pages/offers/offers.html");
 
   //If token existed, for example after a refresh, set UI accordingly
   const token = localStorage.getItem("token");
@@ -54,6 +56,10 @@ window.addEventListener("load", async () => {
       "/foodplan": (match) => {
         renderHtml(templateFoodplan, "content");
         initFoodplan(match);
+      },
+      "/offers": (match)=>{
+        renderHtml(templateOffers, "content");
+        initOffers(match);
       },
     })
     .notFound(() => {

@@ -106,3 +106,13 @@ html {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.card{
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+  text-shadow: 0.5px 0px 0.5px #fff;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}

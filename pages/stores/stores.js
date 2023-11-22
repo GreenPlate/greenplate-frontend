@@ -47,7 +47,8 @@ function chooseStore(e){
 
     const storeId = btn.id.split("_")[0];
 
-    router.navigate(`/foodplan/?storeid=${storeId}`);
+    //router.navigate(`/foodplan/?storeid=${storeId}`); // oprindelig
+    router.navigate(`/offers/?storeid=${storeId}`);
 } 
 function showSpinner() {
     var spinner = document.getElementById("spinner");
