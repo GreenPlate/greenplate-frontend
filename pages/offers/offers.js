@@ -2,17 +2,17 @@
 import {API_URL} from "../../settings.js"
 import { handleHttpErrors, makeOptions, sanitizeStringWithTableRows } from "./../../utility.js"
 const URL=API_URL+"/stores/foodwaste"
+let selectedCards = [];
+
 export async function initOffers(match){
     const storeId = match.params.storeid;
-
- await getOffers(storeId);
- //document.querySelector("#offercard")
+    await getOffers(storeId);
 }
 async function getOffers(id) {
     document.querySelector("#offer-cards").style.visibility = "visible"
-const offers= await fetch(URL+"?id="+id,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
-const clearances=offers[0].clearances;
-const offersRow= clearances.map(clearance => `
+    const offers= await fetch(URL+"?id="+id,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
+    const clearances = offers[0].clearances;
+    const offersRow = clearances.map(clearance => `
 
     <div class="card mx-2 mt-2 d-flex align-items-center  justify-content-center shadow-sm p-3 mb-5 bg-body-tertiary rounded" style="width: 18rem" >
         <div class="col-md-4 d-flex align-items-center  justify-content-center">
@@ -41,4 +41,19 @@ const offersRow= clearances.map(clearance => `
     
     ).join("");
     document.querySelector("#offer-cards").innerHTML=sanitizeStringWithTableRows(offersRow);
+    document.querySelectorAll(".form-check-input").forEach(checkbox => {
+        checkbox.addEventListener("change", function() {
+            handleCheckboxChange(this, offers[0].clearances);
+        });
+    });
+}
+function handleCheckboxChange(checkbox, clearances) {
+    const card = checkbox.parentElement.parentElement.parentElement;
+    const cardIndex = Array.from(card.parentElement.children).indexOf(card);
+    if (checkbox.checked) {
+        selectedCards.push(clearances[cardIndex]);
+    } else {
+        selectedCards = selectedCards.filter(card => card !== clearances[cardIndex]);
+    }
+    console.log(selectedCards); 
 }
