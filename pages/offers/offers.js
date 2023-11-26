@@ -58,10 +58,27 @@ async function getOffers(id) {
     
 }).join("");
     document.querySelector("#offer-cards").innerHTML=sanitizeStringWithTableRows(offersRow);
-    document.querySelectorAll(".form-check-input").forEach(checkbox => {
-        checkbox.addEventListener("change", function() {
-            handleCheckboxChange(this, offers[0].clearances);
-        });
+    document.body.addEventListener('change', function (event) {
+        const target = event.target;
+        if (target.classList.contains("form-check-input")) {
+            handleCheckboxChange(target, offers[0].clearances);
+        }
+    });
+    document.querySelector("#offer-cards").addEventListener('click', function (event) {
+        const clickedElement = event.target;
+        const card = clickedElement.closest('.card');
+        const checkbox = clickedElement.closest('.form-check-input');
+        if (checkbox) {
+            handleCheckboxChange(checkbox, offers[0].clearances);
+        } else if (card) {
+            const checkboxInCard = card.querySelector('.form-check-input');
+            if (checkboxInCard) {
+                checkboxInCard.checked = !checkboxInCard.checked;
+                const changeEvent = new Event('change');
+                checkboxInCard.dispatchEvent(changeEvent);
+                handleCheckboxChange(checkboxInCard, offers[0].clearances);
+            }
+        }
     });
 }
 function handleCheckboxChange(checkbox, clearances) {

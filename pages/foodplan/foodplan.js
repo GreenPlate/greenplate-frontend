@@ -10,6 +10,8 @@ export async function initFoodplan(){
 }
 
 async function fetchRecipe(selectedCards){
+    document.querySelector('#temptext').innerHTML = "Vent et øjeblik mens vi laver din opskrift!"
+    document.querySelector(".card-text").innerHTML = ""
     console.log(selectedCards)
     const ingredients = selectedCardsToIngredients(selectedCards);
     console.log(ingredients);
@@ -26,6 +28,7 @@ async function fetchRecipe(selectedCards){
         });
         htmlOutput += '</p>'
         hideSpinner(); // Hide the spinner when data is loaded
+        document.querySelector('#temptext').innerHTML = "Her er din nye opskrift!"
         document.querySelector(".card-text").innerHTML = sanitizer(htmlOutput)
         
     }
