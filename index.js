@@ -53,9 +53,9 @@ window.addEventListener("load", async () => {
         renderHtml(templateStores, "content");
         initStores();
       },
-      "/foodplan": (match) => {
+      "/foodplan": () => {
         renderHtml(templateFoodplan, "content");
-        initFoodplan(match);
+        initFoodplan();
       },
       "/offers": (match)=>{
         renderHtml(templateOffers, "content");
