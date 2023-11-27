@@ -105,7 +105,7 @@ async function getRecipes(){
                  const selectedRecipe = recipes.find(recipe => recipe.recipeId === parseInt(recipeId));
 
                 // Populate the modal with recipe information
-                document.getElementById('modal-recipe-id').textContent = `Recipe ID: ${selectedRecipe.recipeId}`;
+                document.getElementById('modal-recipe-id').value = selectedRecipe.recipeId;
                 document.getElementById('recipe-name').value = selectedRecipe.recipeTitle;
                 document.getElementById('recipe-ingredients').value = selectedRecipe.recipeIngredients;
                 document.getElementById('recipe-body').value = selectedRecipe.recipeBody;
@@ -117,6 +117,22 @@ async function getRecipes(){
             } else if (action === 'slet opskrift') {
                 // Handle delete button click
                 console.log(`Delete recipe with ID ${recipeId}`);
+
+                // Find the selected recipe based on the recipeId
+                const selectedRecipe = recipes.find(recipe => recipe.recipeId === parseInt(recipeId));
+
+                // Populate the modal with recipe information
+                document.getElementById('modal-recipe-id').value = selectedRecipe.recipeId;
+                document.getElementById('recipe-name').value = selectedRecipe.recipeTitle;
+                document.getElementById('recipe-ingredients').value = selectedRecipe.recipeIngredients;
+                document.getElementById('recipe-body').value = selectedRecipe.recipeBody;
+
+                // Open the modal
+                const changeRecipeModal = new bootstrap.Modal(document.getElementById('deleteRecipe'));
+                changeRecipeModal.show();
+
+
+
             }
         });
     });
@@ -124,6 +140,10 @@ async function getRecipes(){
     // Setup event listener for "Gem opskrift" button in the modal
     const saveButton = document.getElementById('save-recipe-button');
     saveButton.addEventListener('click', saveRecipe);
+
+    // Setup event listener for "Slet opskrift" button in the modal
+    const deleteButton = document.querySelector('#delete-recipe-button');
+    deleteButton.addEventListener('click', deleteRecipe);
 }
 
 
@@ -141,3 +161,17 @@ function saveRecipe() {
     console.log(patchRecipe);
 }
 
+function deleteRecipe() {
+    console.log("deleteRecipe()");
+    // Build JSON object
+    
+    const deleteRecipe = {
+        "recipeId": document.querySelector('#modal-recipe-id').value,
+        "recipeTitle": document.querySelector('#recipe-name').value,
+        "recipeBody": document.querySelector('#recipe-body').value,
+        "recipeIngredients": document.querySelector('#recipe-ingredients').value,
+    };
+
+    console.log(deleteRecipe);
+
+}
