@@ -44,4 +44,7 @@ async function fetchRecipe(selectedCards){
     function selectedCardsToIngredients(selectedCards){
         const ingredients = selectedCards.map(card => card.product.description);
         return ingredients;
+    }
+    function saveRecipe(selectedCards){
+        
     } 
