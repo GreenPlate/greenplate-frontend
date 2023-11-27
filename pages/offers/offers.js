@@ -5,18 +5,18 @@ import { storeData } from "../stores/stores.js";
 const URL=API_URL+"/stores/foodwaste"
 const URL2=API_URL+"/stores/clearance"
 export let selectedCards = [];
-let pageSize = 10;
-let sortfield = 'description';
-let sortDirection = 'asc';
+let pageSize = 6;
+let sortColumn = 'description';
+let sortDirection = 'desc';
 let queryString
 let isInitialized = false;
 let selectedFilter=" ";
-
+let storeId; 
 export async function initOffers(match){
   const page=0;
     userAuthenticated();
-    const storeId = match.params.storeid;
-    await getOffers(storeId);
+     storeId = match.params.storeid;
+    await getOffers(page,storeId);
     const offcanvas = document.querySelector('.offcanvas');
     offcanvas.classList.add('visible');
     document.querySelector('#canvas-hover').addEventListener('mouseover', function () {
@@ -34,11 +34,15 @@ export async function initOffers(match){
         visibilityToggle(false);
     });
 }
-async function getOffers(id) {
+async function getOffers(page=0,id) {
+  const size=pageSize
+  //Build a query string like this to match expectations on the server: ?page=0&size=6&sort=author,desc
+  //`?page=${page}&size=${size}&sort=${sortColumn},${sortDirection}&author=${filterAuthor}&title=${filterTitle}`;
+  queryString = `?page=${page}&size=${size}&sort=${sortColumn},${sortDirection}&id=`
     document.querySelector("#offer-cards").style.visibility = "visible"
-    const offers= await fetch(URL2+"?id="+id,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
+    const offers= await fetch(URL2+queryString+id,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
     // const clearances = offers[0].clearances;
-    const offersRow = offers.map(offer => {
+    const offersRow = offers.content.map(offer => {
         const imgSrc = offer.image ? offer.image : '../../images/PlaceholderProductImage.jpg';
 
         return `
@@ -88,6 +92,7 @@ async function getOffers(id) {
             }
         }
     });
+    displayPagination(offers.totalPages, page);
 }
 function handleCheckboxChange(checkbox, clearances) {
     const card = checkbox.parentElement.parentElement.parentElement;
