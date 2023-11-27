@@ -1,10 +1,12 @@
 import { API_URL } from "./../../settings.js"
 import { handleHttpErrors, makeOptions, sanitizeStringWithTableRows } from "./../../utility.js"
 
+export let storeData = [];
+
 const URL = API_URL + "/stores"
 export async function initStores(){
     document.querySelector('#submit-zip').addEventListener("click", () => {
-        showSpinner(); // Show the spinner while data is being loaded
+        showSpinner();
         getStores(document.querySelector('#zipcode-input').value);
     });
     document.querySelector('#store-cards').addEventListener("click", function (e) {
@@ -27,25 +29,38 @@ async function getStores(zip){
                         </div>
                     </div>
                     <div class="col-md-4 d-flex align-items-center justify-content-center">
-                        <img src="${getBrandLogo(store.brand)}" alt="${store.brand} Logo" style="height: 80px; width: auto;">
+                        <img src="${getBrandLogo(store.brand)}" alt="${store.brand}" style="height: 80px; width: auto;">
                     </div>
                 </div>
             </div>
         </div>
     `).join("")
-        hideSpinner(); // Hide the spinner when data is loaded
+        hideSpinner();
     document.querySelector('#store-cards').innerHTML = sanitizeStringWithTableRows(storeRows);
 
 } 
 
 function chooseStore(e){
     const btn = e.target;
+    storeData = [];
 
     if (!btn.id || !btn.id.includes("_storeid")) {
         return;
     }
-
     const storeId = btn.id.split("_")[0];
+    
+    const selectedStore = storeData.find(store => store.id === storeId);
+    if (!selectedStore) {
+        const storeCard = btn.closest('.card');
+
+        const storeInfo = {
+            id: storeId,
+            name: storeCard.querySelector('.card-title').innerText,
+            address: storeCard.querySelector('.card-text').innerText,
+            brand: storeCard.querySelector('.col-md-4 img').alt
+        };
+        storeData.push(storeInfo);
+    }
 
     //router.navigate(`/foodplan/?storeid=${storeId}`); // oprindelig
     router.navigate(`/offers/?storeid=${storeId}`);

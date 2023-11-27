@@ -116,3 +116,11 @@ html {
 .card:hover {
   transform: scale(1.05);
 }
+#selectionLimitModal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1050; /* Ensure modal is on top */
+}
