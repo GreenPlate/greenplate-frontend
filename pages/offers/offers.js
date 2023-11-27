@@ -235,3 +235,10 @@ function displayPagination(totalPages, currentPage) {
   }
   document.getElementById('pagination').innerHTML = paginationHtml;
 }
+function setupOffcanvasButton(){
+  const filterbutton=` <b class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasfilters" aria-controls="offcanvasExample">
+  filtre 
+</b> <span> Valgt filter: ${selectedFilter} </span>
+`
+document.querySelector("#filters").innerHTML=sanitizeStringWithTableRows(filterbutton)
+}
