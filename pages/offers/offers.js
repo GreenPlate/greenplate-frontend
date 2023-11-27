@@ -3,9 +3,17 @@ import {API_URL} from "../../settings.js"
 import { handleHttpErrors, makeOptions, sanitizeStringWithTableRows, sanitizer } from "./../../utility.js"
 import { storeData } from "../stores/stores.js";
 const URL=API_URL+"/stores/foodwaste"
+const URL2=API_URL+"/stores/clearance"
 export let selectedCards = [];
+let pageSize = 10;
+let sortfield = 'description';
+let sortDirection = 'asc';
+let queryString
+let isInitialized = false;
+let selectedFilter=" ";
 
 export async function initOffers(match){
+  const page=0;
     userAuthenticated();
     const storeId = match.params.storeid;
     await getOffers(storeId);
@@ -28,10 +36,10 @@ export async function initOffers(match){
 }
 async function getOffers(id) {
     document.querySelector("#offer-cards").style.visibility = "visible"
-    const offers= await fetch(URL+"?id="+id,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
-    const clearances = offers[0].clearances;
-    const offersRow = clearances.map(clearance => {
-        const imgSrc = clearance.product.image ? clearance.product.image : '../../images/PlaceholderProductImage.jpg';
+    const offers= await fetch(URL2+"?id="+id,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
+    // const clearances = offers[0].clearances;
+    const offersRow = offers.map(offer => {
+        const imgSrc = offer.image ? offer.image : '../../images/PlaceholderProductImage.jpg';
 
         return `
             <div class="card mx-2 mt-2 d-flex align-items-center  justify-content-center shadow-sm p-3 mb-5 bg-body-tertiary rounded" style="width: 18rem">
@@ -40,17 +48,17 @@ async function getOffers(id) {
                 </div>    
                 <div class="card-body">
                     <div class="h-25">
-                        <h5 class="card-title">${clearance.product.description}</h5>
+                        <h5 class="card-title">${offer.description}</h5>
                     </div>
-                    <p class="card-text"> original pris: ${clearance.offer.originalPrice} <br>
-                        ny pris: ${clearance.offer.newPrice} <br>
-                        rabat: ${clearance.offer.discount} <br>
-                        ${clearance.product.ean}
+                    <p class="card-text"> original pris: ${offer.originalPrice} <br>
+                        ny pris: ${offer.newPrice} <br>
+                        rabat: ${offer.discount} <br>
+                        ${offer.ean}
                     </p>
                     
                     <div class="form-check form-check-reverse ">
                         <label class="form-check-label p-2" for="reverseCheck1"><p>Vælg vare </p></label>
-                        <input class="form-check-input" type="checkbox" value="" data-index="${clearance.product.ean}" style="height:30px; width:30px;">
+                        <input class="form-check-input" type="checkbox" value="" data-index="${offer.ean}" style="height:30px; width:30px;">
                     </div>
                 </div>
             </div>
@@ -61,7 +69,7 @@ async function getOffers(id) {
     document.body.addEventListener('change', function (event) {
         const target = event.target;
         if (target.classList.contains("form-check-input")) {
-            handleCheckboxChange(target, offers[0].clearances);
+            handleCheckboxChange(target, offers);
         }
     });
     document.querySelector("#offer-cards").addEventListener('click', function (event) {
@@ -69,14 +77,14 @@ async function getOffers(id) {
         const card = clickedElement.closest('.card');
         const checkbox = clickedElement.closest('.form-check-input');
         if (checkbox) {
-            handleCheckboxChange(checkbox, offers[0].clearances);
+            handleCheckboxChange(checkbox, offers);
         } else if (card) {
             const checkboxInCard = card.querySelector('.form-check-input');
             if (checkboxInCard) {
                 checkboxInCard.checked = !checkboxInCard.checked;
                 const changeEvent = new Event('change');
                 checkboxInCard.dispatchEvent(changeEvent);
-                handleCheckboxChange(checkboxInCard, offers[0].clearances);
+                handleCheckboxChange(checkboxInCard, offers);
             }
         }
     });
@@ -205,4 +213,25 @@ function userAuthenticated(){
         return;
     }
     document.querySelector('#recipe-button').classList.remove("invisible");
+}
+function displayPagination(totalPages, currentPage) {
+  let paginationHtml = '';
+  if (currentPage > 0) { // Previous Page
+    paginationHtml += `<li class="page-item"><a class="page-link" data-page="${currentPage - 1}" href="#">Previous</a></li>`
+  }
+  // Display page numbers
+  let startPage = Math.max(0, currentPage - 2);
+  let endPage = Math.min(totalPages - 1, currentPage + 2);
+
+  for (let i = startPage; i <= endPage; i++) {
+    if (i === currentPage) {
+      paginationHtml += `<li class="page-item active"><a class="page-link" href="#">${i + 1}</a></li>`
+    } else {
+      paginationHtml += `<li class="page-item"><a class="page-link" data-page="${i}" href="#">${i + 1}</a></li>`
+    }
+  }
+  if (currentPage < totalPages - 1) { // Next Page
+    paginationHtml += `<li class="page-item"><a class="page-link" data-page="${currentPage + 1}" href="#">Next</a></li>`
+  }
+  document.getElementById('pagination').innerHTML = paginationHtml;
 }
