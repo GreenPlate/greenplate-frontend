@@ -3,7 +3,6 @@ import { handleHttpErrors, makeOptions, sanitizeStringWithTableRows, sanitizer }
 import { selectedCards } from "../offers/offers.js"
 
 const URL = API_URL + "/recipes"
-
 export async function initFoodplan(){   
     fetchRecipe(selectedCards)
     showSpinner(); // Show the spinner while data is being loaded
@@ -11,26 +10,29 @@ export async function initFoodplan(){
 
 async function fetchRecipe(selectedCards){
     document.querySelector('#temptext').innerHTML = "Vent et øjeblik mens vi laver din opskrift!"
-    document.querySelector(".card-text").innerHTML = ""
-    console.log(selectedCards)
+    document.querySelector(".recipe-container").innerHTML = ""
+    document.querySelector('#recipe-modal-head').innerHTML = ""
+    document.querySelector('#input-field-recipe').value = ""
+    const saveButtonRecipe = document.querySelector('#save-button-recipe');
     const ingredients = selectedCardsToIngredients(selectedCards);
-    console.log(ingredients);
     const data = await fetch(URL, makeOptions("POST", ingredients, true)).then(r =>handleHttpErrors(r))
-        var recipeText = data.answer;
-        var lines = recipeText.split('\n');
-
-        var htmlOutput = '<p>';
-        lines.forEach(function(line) {
-            if (line.trim() !== '') {
-            var depth = line.split('  ').length - 1;
-            htmlOutput += '&emsp;'.repeat(depth) + line.trim() + '<br>';
-            }
-        });
-        htmlOutput += '</p>'
         hideSpinner(); // Hide the spinner when data is loaded
         document.querySelector('#temptext').innerHTML = "Her er din nye opskrift!"
-        document.querySelector(".card-text").innerHTML = sanitizer(htmlOutput)
-        
+        document.querySelector(".recipe-container").innerHTML = sanitizer(data.answer)
+        var divChecker = document.querySelector(".recipe-container");
+        var containsH3 = divChecker.querySelector("h3") !== null;
+        if(containsH3){
+            saveButtonRecipe.style.display = "block";
+        }
+        document.querySelector('#recipe-modal-head').innerHTML = "<h5>" + document.querySelector('#recipe-heading').innerHTML +"</h5>"
+        document.querySelector('#input-field-recipe').value = document.querySelector('#recipe-heading').innerHTML;
+    
+        const recipeRequest = {
+            "recipeTitle": document.querySelector('#input-field-recipe').value,
+            "recipeIngredients": ingredients.toString(),
+            "recipeBody": data.answer    
+        }
+        document.querySelector('#save-recipe-db').addEventListener('click', () => saveRecipe(recipeRequest))
     }
     function showSpinner() {
         var spinner = document.getElementById("spinner");
@@ -44,4 +46,9 @@ async function fetchRecipe(selectedCards){
     function selectedCardsToIngredients(selectedCards){
         const ingredients = selectedCards.map(card => card.product.description);
         return ingredients;
-    } 
+    }
+    function saveRecipe(recipeRequest){
+        fetch(URL+"/save-recipe", makeOptions("POST", recipeRequest, true)).then(r =>handleHttpErrors(r))
+        document.querySelector('#inside-close').click()
+        router.navigate("/")
+    }
