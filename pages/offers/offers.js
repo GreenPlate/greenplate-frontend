@@ -12,12 +12,18 @@ let queryString;
 let isInitialized = false;
 let selectedFilter=" ";
 let storeId; 
+let page=0;
+
+let totalPages;
 export async function initOffers(match){
- // const page=0;
+   page=0;
     userAuthenticated();
-     const storeId = match.params.storeid;
-     
-    getOffers(storeId);
+     storeId = match.params.storeid;
+     if (!isInitialized) {  //No reason to setup event handlers if it's already been done
+        isInitialized = true;
+        document.querySelector('#pagination').addEventListener('click', handlePaginationClick)       
+      }
+    getOffers(page);
     const offcanvas = document.querySelector('.offcanvas');
     offcanvas.classList.add('visible');
     document.querySelector('#canvas-hover').addEventListener('mouseover', function () {
@@ -35,13 +41,17 @@ export async function initOffers(match){
         visibilityToggle(false);
     });
 }
-async function getOffers(id) {
+async function getOffers(pageNumber) {
   
-  //Build a query string like this to match expectations on the server: ?page=0&size=6&sort=author,desc
- 
+     
+    const pageSize=6;
     document.querySelector("#offer-cards").style.visibility = "visible"
-    const offers= await fetch(URL2+"?id="+id,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
-    // const clearances = offers[0].clearances;
+    const offersList= await fetch(URL2+"?id="+storeId,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
+    totalPages=Math.ceil(offersList.length / pageSize);
+    const startIndex = (pageNumber) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const offers = offersList.slice(startIndex, endIndex);  
+
     const offersRow = offers.map(offer => {
         const imgSrc = offer.image ? offer.image : '../../images/PlaceholderProductImage.jpg';
 
@@ -71,7 +81,7 @@ async function getOffers(id) {
 }).join("");
 
     document.querySelector("#offer-cards").innerHTML=sanitizeStringWithTableRows(offersRow);
-  
+    
     document.body.addEventListener('change', function (event) {
         const target = event.target;
         if (target.classList.contains("form-check-input")) {
@@ -94,15 +104,18 @@ async function getOffers(id) {
             }
         }
     });
-   
+   // displayPaginationButtons();
+   displayPagination(totalPages,pageNumber)
+
 }
-function handleCheckboxChange(checkbox, clearances) {
+
+function handleCheckboxChange(checkbox, offers) {
     const card = checkbox.parentElement.parentElement.parentElement;
     const cardIndex = Array.from(card.parentElement.children).indexOf(card);
-    if (checkbox.checked) {
-        selectedCards.push(clearances[cardIndex]);
+    if (checkbox.checked&&selectedCards.length<=5) {
+        selectedCards.push(offers[cardIndex]);
     } else {
-        selectedCards = selectedCards.filter(card => card !== clearances[cardIndex]);
+        selectedCards = selectedCards.filter(card => card !== offers[cardIndex]);
     }
     if (selectedCards.length > 5) {
         const modal = document.getElementById('selectionLimitModal');
@@ -139,18 +152,18 @@ async function cardsToCanvas(storeData){
     }
     document.querySelector('#number-canvas').innerHTML = listAmount;
     const cards = selectedCards.map((card) => {
-        const imgSrc = card.product.image ? card.product.image : '../../images/PlaceholderProductImage.jpg';
+        const imgSrc = card.image ? card.image : '../../images/PlaceholderProductImage.jpg';
         return`
         <div class="row p-2">   
-            <div class="col text-start" style="white-space: nowrap; max-width: 70%; overflow: hidden; text-overflow: ellipsis;">${card.product.description}</div>
-            <div class="col" style="max-width: 25%;">${card.offer.newPrice}</div>
-            <button class="col btn-remove modal-dialog-centered justify-content-center" data-index="${card.product.ean}" style="max-width: 5%; border: solid 1px rgb(255, 82, 82); color:grey; background-color:white;">X</button>
+            <div class="col text-start" style="white-space: nowrap; max-width: 70%; overflow: hidden; text-overflow: ellipsis;">${card.description}</div>
+            <div class="col" style="max-width: 25%;">${card.newPrice}</div>
+            <button class="col btn-remove modal-dialog-centered justify-content-center" data-index="${card.ean}" style="max-width: 5%; border: solid 1px rgb(255, 82, 82); color:grey; background-color:white;">X</button>
         </div>
     `}).join("");
     document.querySelector('#canvas-cards').innerHTML = sanitizeStringWithTableRows(cards);
     if(!selectedCards.length == 0){
         const totalPriceSectionExists = document.querySelector('#canvas-cards').innerHTML.includes('Total pris');
-        const totalPrice = selectedCards.reduce((sum, card) => sum + parseFloat(card.offer.newPrice), 0);
+        const totalPrice = selectedCards.reduce((sum, card) => sum + parseFloat(card.newPrice), 0);
 
         if (!totalPriceSectionExists) {
             document.querySelector('#canvas-cards').innerHTML += `
@@ -169,7 +182,7 @@ async function cardsToCanvas(storeData){
             if (checkbox) {
                 checkbox.checked = false;
             }
-            const indexToRemove = selectedCards.findIndex(card => card.product.ean === eanToRemove);
+            const indexToRemove = selectedCards.findIndex(card => card.ean === eanToRemove);
             if (indexToRemove !== -1) {
                 selectedCards.splice(indexToRemove, 1);
                 cardsToCanvas(storeData);
@@ -229,3 +242,46 @@ function setupOffcanvasButton(){
 `
 document.querySelector("#filters").innerHTML=sanitizeStringWithTableRows(filterbutton)
 }
+function displayPaginationButtons() {
+    const paginationContainer = document.getElementById('pagination-container');
+    paginationContainer.innerHTML = '';
+
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.classList.add('pagination-button');
+        button.addEventListener('click', () => {
+            getOffers(i);
+        });
+        paginationContainer.appendChild(button);
+    }
+    
+}
+function displayPagination(totalPages, currentPage) {
+    let paginationHtml = '';
+    if (currentPage > 0) { // Previous Page
+      paginationHtml += `<li class="page-item"><a class="page-link" data-page="${currentPage - 1}" href="#">Previous</a></li>`
+    }
+    // Display page numbers
+    let startPage = Math.max(0, currentPage - 2);
+    let endPage = Math.min(totalPages - 1, currentPage + 2);
+  
+    for (let i = startPage; i <= endPage; i++) {
+      if (i === currentPage) {
+        paginationHtml += `<li class="page-item active"><a class="page-link" href="#">${i + 1}</a></li>`
+      } else {
+        paginationHtml += `<li class="page-item"><a class="page-link" data-page="${i}" href="#">${i + 1}</a></li>`
+      }
+    }
+    if (currentPage < totalPages - 1) { // Next Page
+      paginationHtml += `<li class="page-item"><a class="page-link" data-page="${currentPage + 1}" href="#">Next</a></li>`
+    }
+    document.getElementById('pagination').innerHTML = paginationHtml;
+}
+function handlePaginationClick(evt) {
+    evt.preventDefault()
+    if (evt.target.tagName === 'A' && evt.target.hasAttribute('data-page')) {
+       page = parseInt(evt.target.getAttribute('data-page'));
+      getOffers(page);
+    }
+  }
