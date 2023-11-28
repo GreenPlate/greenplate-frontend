@@ -69,6 +69,7 @@ async function getOffers(page=0,id) {
 </div>`
     
 }).join("");
+displayPagination(offers.totalPages, page);
     document.querySelector("#offer-cards").innerHTML=sanitizeStringWithTableRows(offersRow);
     document.body.addEventListener('change', function (event) {
         const target = event.target;
@@ -92,7 +93,7 @@ async function getOffers(page=0,id) {
             }
         }
     });
-    displayPagination(offers.totalPages, page);
+    
 }
 function handleCheckboxChange(checkbox, clearances) {
     const card = checkbox.parentElement.parentElement.parentElement;
@@ -238,7 +239,7 @@ function displayPagination(totalPages, currentPage) {
   if (currentPage < totalPages - 1) { // Next Page
     paginationHtml += `<li class="page-item"><a class="page-link" data-page="${currentPage + 1}" href="#">Next</a></li>`
   }
-  document.getElementById('pagination').innerHTML = paginationHtml;
+  document.querySelector('#pagination').innerHTML = paginationHtml;
 }
 function setupOffcanvasButton(){
   const filterbutton=` <b class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasfilters" aria-controls="offcanvasExample">
