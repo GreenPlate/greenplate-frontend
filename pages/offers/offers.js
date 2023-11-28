@@ -8,15 +8,16 @@ export let selectedCards = [];
 let pageSize = 6;
 let sortColumn = 'description';
 let sortDirection = 'desc';
-let queryString
+let queryString;
 let isInitialized = false;
 let selectedFilter=" ";
 let storeId; 
 export async function initOffers(match){
-  const page=0;
+ // const page=0;
     userAuthenticated();
-     storeId = match.params.storeid;
-    await getOffers(page,storeId);
+     const storeId = match.params.storeid;
+     
+    getOffers(storeId);
     const offcanvas = document.querySelector('.offcanvas');
     offcanvas.classList.add('visible');
     document.querySelector('#canvas-hover').addEventListener('mouseover', function () {
@@ -34,15 +35,14 @@ export async function initOffers(match){
         visibilityToggle(false);
     });
 }
-async function getOffers(page=0,id) {
-  const size=pageSize
+async function getOffers(id) {
+  
   //Build a query string like this to match expectations on the server: ?page=0&size=6&sort=author,desc
-  //`?page=${page}&size=${size}&sort=${sortColumn},${sortDirection}&author=${filterAuthor}&title=${filterTitle}`;
-  queryString = `?page=${page}&size=${size}&sort=${sortColumn},${sortDirection}&id=`
+ 
     document.querySelector("#offer-cards").style.visibility = "visible"
-    const offers= await fetch(URL2+queryString+id,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
+    const offers= await fetch(URL2+"?id="+id,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
     // const clearances = offers[0].clearances;
-    const offersRow = offers.content.map(offer => {
+    const offersRow = offers.map(offer => {
         const imgSrc = offer.image ? offer.image : '../../images/PlaceholderProductImage.jpg';
 
         return `
@@ -69,8 +69,9 @@ async function getOffers(page=0,id) {
 </div>`
     
 }).join("");
-displayPagination(offers.totalPages, page);
+
     document.querySelector("#offer-cards").innerHTML=sanitizeStringWithTableRows(offersRow);
+  
     document.body.addEventListener('change', function (event) {
         const target = event.target;
         if (target.classList.contains("form-check-input")) {
@@ -93,7 +94,7 @@ displayPagination(offers.totalPages, page);
             }
         }
     });
-    
+   
 }
 function handleCheckboxChange(checkbox, clearances) {
     const card = checkbox.parentElement.parentElement.parentElement;
@@ -137,7 +138,7 @@ async function cardsToCanvas(storeData){
         document.querySelector('#placeholdertext').innerHTML = "Hvis du er medlem kan du vælge 3-5 <br> produkter og få en opskrift lavet af en AI!"
     }
     document.querySelector('#number-canvas').innerHTML = listAmount;
-    const cards = selectedCards.map((card, index) => {
+    const cards = selectedCards.map((card) => {
         const imgSrc = card.product.image ? card.product.image : '../../images/PlaceholderProductImage.jpg';
         return`
         <div class="row p-2">   
@@ -220,27 +221,7 @@ function userAuthenticated(){
     }
     document.querySelector('#recipe-button').classList.remove("invisible");
 }
-function displayPagination(totalPages, currentPage) {
-  let paginationHtml = '';
-  if (currentPage > 0) { // Previous Page
-    paginationHtml += `<li class="page-item"><a class="page-link" data-page="${currentPage - 1}" href="#">Previous</a></li>`
-  }
-  // Display page numbers
-  let startPage = Math.max(0, currentPage - 2);
-  let endPage = Math.min(totalPages - 1, currentPage + 2);
 
-  for (let i = startPage; i <= endPage; i++) {
-    if (i === currentPage) {
-      paginationHtml += `<li class="page-item active"><a class="page-link" href="#">${i + 1}</a></li>`
-    } else {
-      paginationHtml += `<li class="page-item"><a class="page-link" data-page="${i}" href="#">${i + 1}</a></li>`
-    }
-  }
-  if (currentPage < totalPages - 1) { // Next Page
-    paginationHtml += `<li class="page-item"><a class="page-link" data-page="${currentPage + 1}" href="#">Next</a></li>`
-  }
-  document.querySelector('#pagination').innerHTML = paginationHtml;
-}
 function setupOffcanvasButton(){
   const filterbutton=` <b class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasfilters" aria-controls="offcanvasExample">
   filtre 
