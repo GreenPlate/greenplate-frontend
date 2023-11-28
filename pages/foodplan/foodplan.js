@@ -11,24 +11,25 @@ export async function initFoodplan(){
 
 async function fetchRecipe(selectedCards){
     document.querySelector('#temptext').innerHTML = "Vent et øjeblik mens vi laver din opskrift!"
-    document.querySelector(".recipe-container").innerHTML = ""
+    document.querySelector(".card-text").innerHTML = ""
     console.log(selectedCards)
     const ingredients = selectedCardsToIngredients(selectedCards);
     console.log(ingredients);
     const data = await fetch(URL, makeOptions("POST", ingredients, true)).then(r =>handleHttpErrors(r))
-        // var recipeText = data.answer;
-        // var lines = recipeText.split('\n');
-        // var htmlOutput = '';
-        // lines.forEach(function(line) {
-        //     if (line.trim() !== '') {
-        //     var depth = line.split('  ').length - 1;
-        //     htmlOutput += '&emsp;'.repeat(depth) + line.trim() + '<br>';
-        //     }
-        // });
-        
+        var recipeText = data.answer;
+        var lines = recipeText.split('\n');
+
+        var htmlOutput = '<p>';
+        lines.forEach(function(line) {
+            if (line.trim() !== '') {
+            var depth = line.split('  ').length - 1;
+            htmlOutput += '&emsp;'.repeat(depth) + line.trim() + '<br>';
+            }
+        });
+        htmlOutput += '</p>'
         hideSpinner(); // Hide the spinner when data is loaded
         document.querySelector('#temptext').innerHTML = "Her er din nye opskrift!"
-        document.querySelector(".recipe-container").innerHTML = sanitizer(data.answer)
+        document.querySelector(".card-text").innerHTML = sanitizer(htmlOutput)
         
     }
     function showSpinner() {
