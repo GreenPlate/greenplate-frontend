@@ -16,6 +16,8 @@ async function getRecipes(){
     console.log(API_URL + "/recipes");
     const recipes = await fetch(API_URL + "/recipes/admin", makeOptions("GET", null, true)).then(r => handleHttpErrors(r));
 
+console.log(recipes);
+
     // Map recipes to innerHTML
     const recipeRows = recipes.map(recipe => `
         <div class="custom-card mt-2">
@@ -23,8 +25,8 @@ async function getRecipes(){
                 <h5 class="card-title">${recipe.recipeTitle}</h5>
                 <h6 class="card-subtitle mb-2 text-body-secondary">${recipe.recipeIngredients}</h6>
                 <p class="card-text">${recipe.recipeBody}<p>
-                <button id="${recipe.recipeId}_recipeid" href="#" class="card-link">Ændre opskrift</button>
-                <button id="${recipe.recipeId}_recipeid" href="#" class="card-link">Slet opskrift</button>
+                <button id="${recipe.id}_recipeid" href="#" class="card-link">Ændre opskrift</button>
+                <button id="${recipe.id}_recipeid" href="#" class="card-link">Slet opskrift</button>
             </div>
         </div>
     `).join("");
@@ -44,10 +46,10 @@ async function getRecipes(){
                 console.log(`Change recipe with ID ${recipeId}`);
 
                  // Find the selected recipe based on the recipeId
-                 const selectedRecipe = recipes.find(recipe => recipe.recipeId === parseInt(recipeId));
+                 const selectedRecipe = recipes.find(recipe => recipe.id === parseInt(recipeId));
 
                 // Populate the modal with recipe information
-                document.getElementById('modal-recipe-id').value = selectedRecipe.recipeId;
+                document.getElementById('modal-recipe-id').value = selectedRecipe.id;
                 document.getElementById('recipe-name').value = selectedRecipe.recipeTitle;
                 document.getElementById('recipe-ingredients').value = selectedRecipe.recipeIngredients;
                 document.getElementById('recipe-body').value = selectedRecipe.recipeBody;
@@ -61,10 +63,10 @@ async function getRecipes(){
                 console.log(`Delete recipe with ID ${recipeId}`);
 
                 // Find the selected recipe based on the recipeId
-                const selectedRecipe = recipes.find(recipe => recipe.recipeId === parseInt(recipeId));
+                const selectedRecipe = recipes.find(recipe => recipe.id === parseInt(recipeId));
 
                 // Populate the modal with recipe information
-                document.getElementById('modal-recipe-id').value = selectedRecipe.recipeId;
+                document.getElementById('modal-recipe-id').value = selectedRecipe.id;
                 document.getElementById('recipe-name').value = selectedRecipe.recipeTitle;
                 document.getElementById('recipe-ingredients').value = selectedRecipe.recipeIngredients;
                 document.getElementById('recipe-body').value = selectedRecipe.recipeBody;
@@ -89,21 +91,25 @@ async function getRecipes(){
 }
 
 
-function saveRecipe() {
+async function saveRecipe() {
     console.log("saveRecipe()")
 
     // Build JSON object
     const patchRecipe = {
-        "recipeId": document.querySelector('#modal-recipe-id').value,
+        "id": document.querySelector('#modal-recipe-id').value,
         "recipeTitle": document.querySelector('#recipe-name').value,
         "recipeBody": document.querySelector('#recipe-body').value,
         "recipeIngredients": document.querySelector('#recipe-ingredients').value,
     };
 
     console.log(patchRecipe);
+
+    const newRecipe = await fetch(API_URL + "/recipes/admin", makeOptions("PATCH", patchRecipe, true)).then(r => handleHttpErrors(r));
+
+    console.log(newRecipe);
 }
 
-function deleteRecipe() {
+async function deleteRecipe() {
     console.log("deleteRecipe()");
     // Build JSON object
     
@@ -114,6 +120,5 @@ function deleteRecipe() {
         "recipeIngredients": document.querySelector('#recipe-ingredients').value,
     };
 
-    console.log(deleteRecipe);
 
 }
