@@ -35,10 +35,7 @@
         </div>
     </div>
 
-    <!-- CHANGE RECIPE MODAL -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#changeRecipe" data-bs-whatever="@fat">Ændre opskrift</button>
-
-    
+    <!-- CHANGE RECIPE MODAL --> 
     <div class="modal fade" id="changeRecipe" tabindex="-1" aria-labelledby="changeRecipeLabel" aria-hidden="true">
       <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -64,10 +61,11 @@
                 <label for="recipe-body" class="col-form-label">Recipe body:</label>
                 <textarea class="form-control" id="recipe-body" placeholder="Recipe body..."></textarea>
               </div>
+
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fortryd</button>
             <button type="button" class="btn btn-primary" id="save-recipe-button" data-bs-dismiss="modal">Gem ændringer</button>
           </div>
         </div>
@@ -75,35 +73,34 @@
     </div>
 
 
-        <!-- DELETE RECIPE MODAL -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteRecipe" data-bs-whatever="@fat">Slet opskrift</button>
-
-    
+        <!-- DELETE RECIPE MODAL -->   
         <div class="modal fade" id="deleteRecipe" tabindex="-1" aria-labelledby="deleteRecipeLabel" aria-hidden="true">
           <div class="modal-dialog modal-xl">
             <div class="modal-content">
               <div class="modal-header">
                 <h1 class="modal-title fs-5" id="deleteRecipelLabel">Slet opskrift:</h1>
-                <div id="modal-recipe-id"></div>
+                <div id="delete-modal-recipe-id"></div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <form>
-    
-                  <div class="mb-3">
-                    <label for="recipe-name" class="col-form-label">Recipe name:</label>
-                    <input type="text" class="form-control" id="recipe-name" placeholder="Recipe name....">
-                  </div>
-    
-                  <div class="mb-3">
-                    <label for="recipe-ingredients" class="col-form-label">Recipe ingredients:</label>
-                    <input type="text" class="form-control" id="recipe-ingredients" placeholder="Recipe ingredients....">
-                  </div>
-    
-                  <div class="mb-3">
-                    <label for="recipe-body" class="col-form-label">Recipe body:</label>
-                    <textarea class="form-control" id="recipe-body" placeholder="Recipe body..."></textarea>
-                  </div>
+            <form>
+
+              <div class="mb-3">
+                <label for="delete-recipe-name" class="col-form-label">Recipe name:</label>
+                <input type="text" class="form-control" id="delete-recipe-name" placeholder="Recipe name....">
+              </div>
+
+              <div class="mb-3">
+                <label for="delete-recipe-ingredients" class="col-form-label">Recipe ingredients:</label>
+                <input type="text" class="form-control" id="delete-recipe-ingredients" placeholder="Recipe ingredients....">
+              </div>
+
+              <div class="mb-3">
+                <label for="delete-recipe-body" class="col-form-label">Recipe body:</label>
+                <textarea class="form-control" id="delete-recipe-body" placeholder="Recipe body..."></textarea>
+              </div>
+
                 </form>
               </div>
               <div class="modal-footer">

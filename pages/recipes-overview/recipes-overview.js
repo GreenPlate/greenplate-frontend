@@ -66,10 +66,11 @@ console.log(recipes);
                 const selectedRecipe = recipes.find(recipe => recipe.id === parseInt(recipeId));
 
                 // Populate the modal with recipe information
-                document.getElementById('modal-recipe-id').value = selectedRecipe.id;
-                document.getElementById('recipe-name').value = selectedRecipe.recipeTitle;
-                document.getElementById('recipe-ingredients').value = selectedRecipe.recipeIngredients;
-                document.getElementById('recipe-body').value = selectedRecipe.recipeBody;
+                document.getElementById('delete-modal-recipe-id').value = selectedRecipe.id;
+                document.getElementById('delete-recipe-name').value = selectedRecipe.recipeTitle;
+                document.getElementById('delete-recipe-ingredients').value = selectedRecipe.recipeIngredients;
+                document.getElementById('delete-recipe-body').value = selectedRecipe.recipeBody;
+ 
 
                 // Open the modal
                 const changeRecipeModal = new bootstrap.Modal(document.getElementById('deleteRecipe'));
@@ -112,13 +113,31 @@ async function saveRecipe() {
 async function deleteRecipe() {
     console.log("deleteRecipe()");
     // Build JSON object
+    console.log(document.querySelector('#delete-modal-recipe-id').value)
     
     const deleteRecipe = {
-        "recipeId": document.querySelector('#modal-recipe-id').value,
-        "recipeTitle": document.querySelector('#recipe-name').value,
-        "recipeBody": document.querySelector('#recipe-body').value,
-        "recipeIngredients": document.querySelector('#recipe-ingredients').value,
+        "id": parseInt(document.querySelector('#delete-modal-recipe-id').value),
+        "recipeTitle": document.querySelector('#delete-recipe-name').value,
+        "recipeBody": document.querySelector('#delete-recipe-body').value,
+        "recipeIngredients": document.querySelector('#delete-recipe-ingredients').value,
     };
+
+    await fetch(API_URL + "/recipes/admin", makeOptions("DELETE", deleteRecipe, true));
+    getRecipes();
+
+    //try {
+    //    const delete_res = await fetch(API_URL + "/recipes/admin", makeOptions("DELETE", deleteRecipe, true));
+    //    
+    //    if (!delete_res.ok) {
+    //      const errorResponse = await delete_res.json();
+    //      errorMessageElement.textContent = errorResponse.message;
+    //      } else {
+    //       initRecipesOverview()
+    //     }
+    //  } catch (error) {
+    //    errorMessageElement.textContent = "An error occurred while deleting the movie.";
+    //    console.error(error);
+    //  }
 
 
 }
