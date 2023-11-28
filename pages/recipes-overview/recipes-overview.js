@@ -1,22 +1,18 @@
 import { API_URL } from "./../../settings.js"
-
 import { handleHttpErrors, makeOptions, sanitizeStringWithTableRows } from "./../../utility.js"
 
-export async function initRecipesOverview(){
-    console.log("initRecipesOverview()");
-
-    await getRecipes()
-
+/**
+ * Initiates the recipes overview by fetching and displaying recipes.
+ */
+export async function initRecipesOverview() {
+    // Fetch and display recipes
+    getRecipes();
 }
 
-async function getRecipes(){
-    console.log("getRecipes()")
-    
-    // fetch recipes from database
-    console.log(API_URL + "/recipes");
-    const recipes = await fetch(API_URL + "/recipes/admin", makeOptions("GET", null, true)).then(r => handleHttpErrors(r));
 
-console.log(recipes);
+async function getRecipes(){
+    // fetch recipes from database
+    const recipes = await fetch(API_URL + "/recipes/admin", makeOptions("GET", null, true)).then(r => handleHttpErrors(r));
 
     // Map recipes to innerHTML
     const recipeRows = recipes.map(recipe => `
@@ -70,14 +66,10 @@ console.log(recipes);
                 document.getElementById('delete-recipe-name').value = selectedRecipe.recipeTitle;
                 document.getElementById('delete-recipe-ingredients').value = selectedRecipe.recipeIngredients;
                 document.getElementById('delete-recipe-body').value = selectedRecipe.recipeBody;
- 
 
                 // Open the modal
                 const changeRecipeModal = new bootstrap.Modal(document.getElementById('deleteRecipe'));
                 changeRecipeModal.show();
-
-
-
             }
         });
     });
@@ -92,10 +84,13 @@ console.log(recipes);
 }
 
 
+/**
+ * Asynchronous function to handle saving or updating a recipe.
+ */
 async function saveRecipe() {
-    console.log("saveRecipe()")
+    console.log("saveRecipe()");
 
-    // Build JSON object
+    // Build JSON object for the recipe to be saved or updated
     const patchRecipe = {
         "id": document.querySelector('#modal-recipe-id').value,
         "recipeTitle": document.querySelector('#recipe-name').value,
@@ -103,18 +98,24 @@ async function saveRecipe() {
         "recipeIngredients": document.querySelector('#recipe-ingredients').value,
     };
 
-    console.log(patchRecipe);
+    // Send a PATCH request to the server to save or update the recipe
+    // Note: You might want to handle the response or errors appropriately
+    await fetch(API_URL + "/recipes/admin", makeOptions("PATCH", patchRecipe, true)).then(r => handleHttpErrors(r));
 
-    const newRecipe = await fetch(API_URL + "/recipes/admin", makeOptions("PATCH", patchRecipe, true)).then(r => handleHttpErrors(r));
+    // Refresh the recipe list after saving
+    getRecipes();
 
-    console.log(newRecipe);
 }
 
+
+/**
+ * Asynchronous function to handle the deletion of a recipe.
+ */
 async function deleteRecipe() {
     console.log("deleteRecipe()");
-    // Build JSON object
-    console.log(document.querySelector('#delete-modal-recipe-id').value)
     
+    // Build JSON object for the recipe to be deleted
+    console.log(document.querySelector('#delete-modal-recipe-id').value)
     const deleteRecipe = {
         "id": parseInt(document.querySelector('#delete-modal-recipe-id').value),
         "recipeTitle": document.querySelector('#delete-recipe-name').value,
@@ -122,22 +123,9 @@ async function deleteRecipe() {
         "recipeIngredients": document.querySelector('#delete-recipe-ingredients').value,
     };
 
+    // Send a DELETE request to the server
     await fetch(API_URL + "/recipes/admin", makeOptions("DELETE", deleteRecipe, true));
+
+    // Refresh the recipe list after deletion
     getRecipes();
-
-    //try {
-    //    const delete_res = await fetch(API_URL + "/recipes/admin", makeOptions("DELETE", deleteRecipe, true));
-    //    
-    //    if (!delete_res.ok) {
-    //      const errorResponse = await delete_res.json();
-    //      errorMessageElement.textContent = errorResponse.message;
-    //      } else {
-    //       initRecipesOverview()
-    //     }
-    //  } catch (error) {
-    //    errorMessageElement.textContent = "An error occurred while deleting the movie.";
-    //    console.error(error);
-    //  }
-
-
 }
