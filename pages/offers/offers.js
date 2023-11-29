@@ -74,8 +74,7 @@ async function getOffers(pageNumber) {
                     </div>
                 </div>
             </div>
-</div>`
-    
+</div>`    
 }).join("");
     document.querySelector("#offer-cards").innerHTML=sanitizeStringWithTableRows(offersRow);    
     document.body.addEventListener('change', function (event) {
