@@ -41,8 +41,7 @@ export async function initOffers(match){
         visibilityToggle(false);
     });
 }
-async function getOffers(pageNumber) {
-  
+async function getOffers(pageNumber) { 
      
     const pageSize=6;
     document.querySelector("#offer-cards").style.visibility = "visible"
@@ -51,8 +50,7 @@ async function getOffers(pageNumber) {
     const startIndex = (pageNumber) * pageSize;
         const endIndex = startIndex + pageSize;
         const offers = offersList.slice(startIndex, endIndex);  
-
-    const offersRow = offers.map(offer => {
+        const offersRow = offers.map(offer => {
         const imgSrc = offer.image ? offer.image : '../../images/PlaceholderProductImage.jpg';
 
         return `
@@ -79,9 +77,7 @@ async function getOffers(pageNumber) {
 </div>`
     
 }).join("");
-
-    document.querySelector("#offer-cards").innerHTML=sanitizeStringWithTableRows(offersRow);
-    
+    document.querySelector("#offer-cards").innerHTML=sanitizeStringWithTableRows(offersRow);    
     document.body.addEventListener('change', function (event) {
         const target = event.target;
         if (target.classList.contains("form-check-input")) {
@@ -104,7 +100,7 @@ async function getOffers(pageNumber) {
             }
         }
     });
-   // displayPaginationButtons();
+   
    displayPagination(totalPages,pageNumber)
 
 }
@@ -242,21 +238,7 @@ function setupOffcanvasButton(){
 `
 document.querySelector("#filters").innerHTML=sanitizeStringWithTableRows(filterbutton)
 }
-function displayPaginationButtons() {
-    const paginationContainer = document.getElementById('pagination-container');
-    paginationContainer.innerHTML = '';
 
-    for (let i = 1; i <= totalPages; i++) {
-        const button = document.createElement('button');
-        button.textContent = i;
-        button.classList.add('pagination-button');
-        button.addEventListener('click', () => {
-            getOffers(i);
-        });
-        paginationContainer.appendChild(button);
-    }
-    
-}
 function displayPagination(totalPages, currentPage) {
     let paginationHtml = '';
     if (currentPage > 0) { // Previous Page
