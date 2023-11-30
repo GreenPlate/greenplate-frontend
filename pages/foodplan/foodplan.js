@@ -5,7 +5,7 @@ import { selectedCards } from "../offers/offers.js"
 const URL = API_URL + "/recipes"
 export async function initFoodplan(){   
     fetchRecipe(selectedCards)
-    showSpinner(); // Show the spinner while data is being loaded
+    showSpinner(); 
 }
 
 async function fetchRecipe(selectedCards){

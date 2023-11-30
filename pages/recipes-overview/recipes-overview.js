@@ -133,8 +133,6 @@ async function deleteRecipe() {
     // Refresh the recipe list after deletion
     getRecipes();
 }
-//START OF recipes-overview.js
-
 async function createRecipe(){
 
 var addButton = document.querySelector('.inputFieldButton');
