@@ -1,12 +1,16 @@
 import { API_URL } from "./../../settings.js"
 import { handleHttpErrors, makeOptions, sanitizeStringWithTableRows } from "./../../utility.js"
 
+export let ingredients = "";
+var maxFields = 5;
+var currentFields = 1;
 /**
  * Initiates the recipes overview by fetching and displaying recipes.
  */
 export async function initRecipesOverview() {
     // Fetch and display recipes
     getRecipes();
+    createRecipe();
 }
 
 
@@ -128,4 +132,56 @@ async function deleteRecipe() {
 
     // Refresh the recipe list after deletion
     getRecipes();
+}
+//START OF recipes-overview.js
+
+async function createRecipe(){
+
+var addButton = document.querySelector('.inputFieldButton');
+var removeButton = document.querySelector('.removeFieldButton');
+addButton.addEventListener('click', function () {
+    if (currentFields < maxFields) {
+        addIngredientField();
+        currentFields++;
+    } else {
+        alert('You can only add up to 5 ingredients.');
+    }
+});
+removeButton.addEventListener('click', function () {
+    if (currentFields > 1) {
+        removeIngredientField();
+        currentFields--;
+    } else {
+        alert('You must have at least one ingredient.');
+    }
+});
+function addIngredientField() {
+    var ingredientFields = document.getElementById('ingredientFields');
+
+    var newInputGroup = document.createElement('div');
+    newInputGroup.className = 'input-group mb-3';
+
+    var newInput = document.createElement('input');
+    newInput.className = 'form-control form-control-lg';
+    newInput.type = 'text';
+    newInput.placeholder = 'Indtast ingrediens';
+    newInput.setAttribute('aria-label', '.form-control-lg example');
+
+    newInputGroup.appendChild(newInput);
+    ingredientFields.appendChild(newInputGroup);
+}
+function removeIngredientField() {
+    var ingredientFields = document.getElementById('ingredientFields');
+    ingredientFields.removeChild(ingredientFields.lastElementChild);
+}
+
+
+document.querySelector('#createRecipeButton').addEventListener('click', function () {        
+    var closeButton = document.querySelector('#recipeCreateModal [data-bs-dismiss="modal"]');
+    closeButton.click();
+    const ingredientsInputs = document.querySelectorAll('#ingredientFields input');
+    ingredients = Array.from(ingredientsInputs).map(input => input.value).join(', ');
+    console.log(ingredients + "-------- fra input fields");
+    router.navigate(`/createRecipe/`);
+    });
 }
