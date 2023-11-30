@@ -9,6 +9,7 @@ import { initLogin, toggleLoginStatus, logout } from "./pages/login/login.js";
 import { initFoodplan } from "./pages/foodplan/foodplan.js";
 import { initOffers } from "./pages/offers/offers.js";
 import { initRecipesOverview } from "./pages/recipes-overview/recipes-overview.js";
+import { initCreateRecipe } from "./pages/createRecipe/createrecipe.js";
 
 window.addEventListener("load", async () => {
   const templateHome = await loadHtml("./pages/home/home.html");
@@ -19,6 +20,7 @@ window.addEventListener("load", async () => {
   const templateFoodplan = await loadHtml("./pages/foodplan/foodplan.html");
   const templateOffers = await loadHtml("./pages/offers/offers.html");
   const templateRecipesOverview = await loadHtml("./pages/recipes-overview/recipes-overview.html");
+  const templateCreateRecipe = await loadHtml("./pages/createRecipe/createRecipe.html");
 
   //If token existed, for example after a refresh, set UI accordingly
   const token = localStorage.getItem("token");
@@ -67,6 +69,10 @@ window.addEventListener("load", async () => {
         renderHtml(templateRecipesOverview, "content");
         initRecipesOverview();
       },
+      "/createRecipe": ()=>{
+        renderHtml(templateCreateRecipe, "content");
+        initCreateRecipe();
+      }
     })
     .notFound(() => {
       renderHtml(templateNotFound, "content");
