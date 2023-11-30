@@ -24,7 +24,7 @@ async function getStores(zip){
                     <div class="col-md-8">
                         <div class="card-body">
                             <h5 class="card-title">${store.name}</h5>
-                            <p class="card-text">${store.address.city}, ${store.address.street}, ${store.address.zip}</p>
+                            <p class="card-text">${store.city}, ${store.street}, ${store.zip}</p>
                             <button id="${store.id}_storeid" class="choose-store btn btn-sm btn-danger">Vælg butik</button>
                         </div>
                     </div>
