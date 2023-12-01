@@ -71,7 +71,7 @@ window.addEventListener("load", async () => {
         renderHtml(templateRecipesOverview, "content");
         initRecipesOverview();
       },
-      "/createrecipe": ()=>{
+      "/create-recipe": ()=>{
         renderHtml(templateCreateRecipe, "content");
         initCreateRecipe();
       },
