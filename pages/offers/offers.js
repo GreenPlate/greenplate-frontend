@@ -5,7 +5,7 @@ import { storeData } from "../stores/stores.js";
 const URL=API_URL+"/stores/foodwaste"
 const URL2=API_URL+"/stores/clearance"
 export let selectedCards = [];
-let pageSize = 6;
+let pageSize = 8;
 let sortColumn = 'description';
 let sortDirection = 'desc';
 let queryString;
@@ -43,7 +43,7 @@ export async function initOffers(match){
 }
 async function getOffers(pageNumber) { 
      
-    const pageSize=6;
+    pageSize=8;
     document.querySelector("#offer-cards").style.visibility = "visible"
     const offersList= await fetch(URL2+"?id="+storeId,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
     totalPages=Math.ceil(offersList.length / pageSize);
@@ -67,7 +67,7 @@ async function getOffers(pageNumber) {
                         rabat: ${offer.discount} <br>
                         ${offer.ean}
                     </p>
-                    
+                    <input class="invisible" type="text" value="${offer.id}">
                     <div class="form-check form-check-reverse ">
                         <label class="form-check-label p-2" for="reverseCheck1"><p>Vælg vare </p></label>
                         <input class="form-check-input" type="checkbox" value="" data-index="${offer.ean}" style="height:30px; width:30px;">
