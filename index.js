@@ -9,7 +9,7 @@ import { initLogin, toggleLoginStatus, logout } from "./pages/login/login.js";
 import { initFoodplan } from "./pages/foodplan/foodplan.js";
 import { initOffers } from "./pages/offers/offers.js";
 import { initRecipesOverview } from "./pages/recipes-overview/recipes-overview.js";
-import { initCreateRecipe } from "./pages/createRecipe/createrecipe.js";
+import { initCreateRecipe } from "./pages/createRecipe/create-recipe.js";
 import { initDashboard } from "./pages/dashboard/dashboard.js";
 
 window.addEventListener("load", async () => {
@@ -21,7 +21,7 @@ window.addEventListener("load", async () => {
   const templateFoodplan = await loadHtml("./pages/foodplan/foodplan.html");
   const templateOffers = await loadHtml("./pages/offers/offers.html");
   const templateRecipesOverview = await loadHtml("./pages/recipes-overview/recipes-overview.html");
-  const templateCreateRecipe = await loadHtml("./pages/createRecipe/createRecipe.html");
+  const templateCreateRecipe = await loadHtml("./pages/createRecipe/create-recipe.html");
   const templateDashboard = await loadHtml("./pages/dashboard/dashboard.html");
 
   //If token existed, for example after a refresh, set UI accordingly
@@ -71,7 +71,7 @@ window.addEventListener("load", async () => {
         renderHtml(templateRecipesOverview, "content");
         initRecipesOverview();
       },
-      "/createRecipe": ()=>{
+      "/create-recipe": ()=>{
         renderHtml(templateCreateRecipe, "content");
         initCreateRecipe();
       },
