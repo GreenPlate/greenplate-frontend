@@ -4,6 +4,7 @@ import { selectedCards } from "../offers/offers.js"
 
 const URL = API_URL + "/recipes"
 export async function initFoodplan(){   
+    console.log(selectedCards)
     fetchRecipe(selectedCards)
     showSpinner(); 
 }
@@ -31,9 +32,10 @@ async function fetchRecipe(selectedCards){
 
         const recipeRequest = {
             "recipeTitle": document.querySelector('#input-field-recipe').value,
-            "recipeIngredients": ingredients.toString(),
-            "recipeBody": data.answer    
+            "recipeBody": data.answer,
+            "offers": selectedCards,
         }
+
         document.querySelector('#save-recipe-db').addEventListener('click', () => saveRecipe(recipeRequest))
     }
     function showSpinner() {
@@ -46,11 +48,12 @@ async function fetchRecipe(selectedCards){
         spinner.style.display = "none";
     }
     function selectedCardsToIngredients(selectedCards){
-        const ingredients = selectedCards.map(card => card.product.description);
+        const ingredients = selectedCards.map(card => card.description);
         return ingredients; 
     }
     function saveRecipe(recipeRequest){
-        fetch(URL+"/save-recipe", makeOptions("POST", recipeRequest, true)).then(r =>handleHttpErrors(r))
         document.querySelector('#inside-close').click()
+        fetch(URL+"/save-recipe", makeOptions("POST", recipeRequest, true)).then(r =>handleHttpErrors(r))
         router.navigate("/")
     }
+    
