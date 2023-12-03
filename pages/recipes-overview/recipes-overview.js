@@ -159,13 +159,23 @@ function addIngredientField() {
     var newInputGroup = document.createElement('div');
     newInputGroup.className = 'input-group mb-3';
 
-    var newInput = document.createElement('input');
-    newInput.className = 'form-control form-control-lg';
-    newInput.type = 'text';
-    newInput.placeholder = 'Indtast ingrediens';
-    newInput.setAttribute('aria-label', '.form-control-lg example');
+    var newSelect = document.createElement('select');
+    newSelect.className = 'form-select form-select-lg'; // You can adjust the class as needed
+    newSelect.setAttribute('aria-label', '.form-select-lg example');
 
-    newInputGroup.appendChild(newInput);
+    // You can add options dynamically if needed
+    var option1 = document.createElement('option');
+    option1.value = '';
+    option1.text = '';
+    newSelect.appendChild(option1);
+
+    var option2 = document.createElement('option');
+    option2.value = '';
+    option2.text = '';
+    newSelect.appendChild(option2);
+
+    // Add the select element to the input group
+    newInputGroup.appendChild(newSelect);
     ingredientFields.appendChild(newInputGroup);
 }
 function removeIngredientField() {
