@@ -9,132 +9,132 @@ var currentFields = 1;
  */
 export async function initRecipesOverview() {
     // Fetch and display recipes
-    getRecipes();
+    // getRecipes();
     createRecipe();
 }
 
 
-async function getRecipes(){
-    // fetch recipes from database
-    const recipes = await fetch(API_URL + "/recipes/admin", makeOptions("GET", null, true)).then(r => handleHttpErrors(r));
+// async function getRecipes(){
+//     // fetch recipes from database
+//     const recipes = await fetch(API_URL + "/recipes/admin", makeOptions("GET", null, true)).then(r => handleHttpErrors(r));
 
-    // Map recipes to innerHTML
-    const recipeRows = recipes.map(recipe => `
-        <div class="custom-card mt-2">
-            <div class="card-body">
-                <h5 class="card-title">${recipe.recipeTitle}</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">${recipe.recipeIngredients}</h6>
-                <p class="card-text">${recipe.recipeBody}<p>
-                <button id="${recipe.id}_recipeid" href="#" class="card-link">Ændre opskrift</button>
-                <button id="${recipe.id}_recipeid" href="#" class="card-link">Slet opskrift</button>
-            </div>
-        </div>
-    `).join("");
+//     // Map recipes to innerHTML
+//     const recipeRows = recipes.map(recipe => `
+//         <div class="custom-card mt-2">
+//             <div class="card-body">
+//                 <h5 class="card-title">${recipe.recipeTitle}</h5>
+//                 <h6 class="card-subtitle mb-2 text-body-secondary">${recipe.recipeIngredients}</h6>
+//                 <p class="card-text">${recipe.recipeBody}<p>
+//                 <button id="${recipe.id}_recipeid" href="#" class="card-link">Ændre opskrift</button>
+//                 <button id="${recipe.id}_recipeid" href="#" class="card-link">Slet opskrift</button>
+//             </div>
+//         </div>
+//     `).join("");
 
-    document.querySelector('#recipe-section').innerHTML = sanitizeStringWithTableRows(recipeRows);
+//     document.querySelector('#recipe-section').innerHTML = sanitizeStringWithTableRows(recipeRows);
 
 
-    // Setup event listeners on change or delete buttons
-    const buttons = document.querySelectorAll('.custom-card button');
-    buttons.forEach(button => {
-        button.addEventListener('click', (event) => {
-            const recipeId = event.target.id.split('_')[0];
-            const action = event.target.textContent.trim().toLowerCase(); // "Ændre opskrift" or "Slet opskrift"
+//     // Setup event listeners on change or delete buttons
+//     const buttons = document.querySelectorAll('.custom-card button');
+//     buttons.forEach(button => {
+//         button.addEventListener('click', (event) => {
+//             const recipeId = event.target.id.split('_')[0];
+//             const action = event.target.textContent.trim().toLowerCase(); // "Ændre opskrift" or "Slet opskrift"
 
-            if (action === 'ændre opskrift') {
-                // Handle change button click
-                console.log(`Change recipe with ID ${recipeId}`);
+//             if (action === 'ændre opskrift') {
+//                 // Handle change button click
+//                 console.log(`Change recipe with ID ${recipeId}`);
 
-                 // Find the selected recipe based on the recipeId
-                 const selectedRecipe = recipes.find(recipe => recipe.id === parseInt(recipeId));
+//                  // Find the selected recipe based on the recipeId
+//                  const selectedRecipe = recipes.find(recipe => recipe.id === parseInt(recipeId));
 
-                // Populate the modal with recipe information
-                document.getElementById('modal-recipe-id').value = selectedRecipe.id;
-                document.getElementById('recipe-name').value = selectedRecipe.recipeTitle;
-                document.getElementById('recipe-ingredients').value = selectedRecipe.recipeIngredients;
-                document.getElementById('recipe-body').value = selectedRecipe.recipeBody;
+//                 // Populate the modal with recipe information
+//                 document.getElementById('modal-recipe-id').value = selectedRecipe.id;
+//                 document.getElementById('recipe-name').value = selectedRecipe.recipeTitle;
+//                 document.getElementById('recipe-ingredients').value = selectedRecipe.recipeIngredients;
+//                 document.getElementById('recipe-body').value = selectedRecipe.recipeBody;
  
-                 // Open the modal
-                const changeRecipeModal = new bootstrap.Modal(document.getElementById('changeRecipe'));
-                changeRecipeModal.show();
+//                  // Open the modal
+//                 const changeRecipeModal = new bootstrap.Modal(document.getElementById('changeRecipe'));
+//                 changeRecipeModal.show();
 
-            } else if (action === 'slet opskrift') {
-                // Handle delete button click
-                console.log(`Delete recipe with ID ${recipeId}`);
+//             } else if (action === 'slet opskrift') {
+//                 // Handle delete button click
+//                 console.log(`Delete recipe with ID ${recipeId}`);
 
-                // Find the selected recipe based on the recipeId
-                const selectedRecipe = recipes.find(recipe => recipe.id === parseInt(recipeId));
+//                 // Find the selected recipe based on the recipeId
+//                 const selectedRecipe = recipes.find(recipe => recipe.id === parseInt(recipeId));
 
-                // Populate the modal with recipe information
-                document.getElementById('delete-modal-recipe-id').value = selectedRecipe.id;
-                document.getElementById('delete-recipe-name').value = selectedRecipe.recipeTitle;
-                document.getElementById('delete-recipe-ingredients').value = selectedRecipe.recipeIngredients;
-                document.getElementById('delete-recipe-body').value = selectedRecipe.recipeBody;
+//                 // Populate the modal with recipe information
+//                 document.getElementById('delete-modal-recipe-id').value = selectedRecipe.id;
+//                 document.getElementById('delete-recipe-name').value = selectedRecipe.recipeTitle;
+//                 document.getElementById('delete-recipe-ingredients').value = selectedRecipe.recipeIngredients;
+//                 document.getElementById('delete-recipe-body').value = selectedRecipe.recipeBody;
 
-                // Open the modal
-                const changeRecipeModal = new bootstrap.Modal(document.getElementById('deleteRecipe'));
-                changeRecipeModal.show();
-            }
-        });
-    });
+//                 // Open the modal
+//                 const changeRecipeModal = new bootstrap.Modal(document.getElementById('deleteRecipe'));
+//                 changeRecipeModal.show();
+//             }
+//         });
+//     });
 
-    // Setup event listener for "Gem opskrift" button in the modal
-    const saveButton = document.getElementById('save-recipe-button');
-    saveButton.addEventListener('click', saveRecipe);
+//     // Setup event listener for "Gem opskrift" button in the modal
+//     const saveButton = document.getElementById('save-recipe-button');
+//     saveButton.addEventListener('click', saveRecipe);
 
-    // Setup event listener for "Slet opskrift" button in the modal
-    const deleteButton = document.querySelector('#delete-recipe-button');
-    deleteButton.addEventListener('click', deleteRecipe);
-}
-
-
-/**
- * Asynchronous function to handle saving or updating a recipe.
- */
-async function saveRecipe() {
-    console.log("saveRecipe()");
-
-    // Build JSON object for the recipe to be saved or updated
-    const patchRecipe = {
-        "id": document.querySelector('#modal-recipe-id').value,
-        "recipeTitle": document.querySelector('#recipe-name').value,
-        "recipeBody": document.querySelector('#recipe-body').value,
-        "recipeIngredients": document.querySelector('#recipe-ingredients').value,
-    };
-
-    // Send a PATCH request to the server to save or update the recipe
-    // Note: You might want to handle the response or errors appropriately
-    await fetch(API_URL + "/recipes/admin", makeOptions("PATCH", patchRecipe, true)).then(r => handleHttpErrors(r));
-
-    // Refresh the recipe list after saving
-    getRecipes();
-
-}
+//     // Setup event listener for "Slet opskrift" button in the modal
+//     const deleteButton = document.querySelector('#delete-recipe-button');
+//     deleteButton.addEventListener('click', deleteRecipe);
+// }
 
 
-/**
- * Asynchronous function to handle the deletion of a recipe.
- */
-async function deleteRecipe() {
-    console.log("deleteRecipe()");
+// /**
+//  * Asynchronous function to handle saving or updating a recipe.
+//  */
+// async function saveRecipe() {
+//     console.log("saveRecipe()");
+
+//     // Build JSON object for the recipe to be saved or updated
+//     const patchRecipe = {
+//         "id": document.querySelector('#modal-recipe-id').value,
+//         "recipeTitle": document.querySelector('#recipe-name').value,
+//         "recipeBody": document.querySelector('#recipe-body').value,
+//         "recipeIngredients": document.querySelector('#recipe-ingredients').value,
+//     };
+
+//     // Send a PATCH request to the server to save or update the recipe
+//     // Note: You might want to handle the response or errors appropriately
+//     await fetch(API_URL + "/recipes/admin", makeOptions("PATCH", patchRecipe, true)).then(r => handleHttpErrors(r));
+
+//     // Refresh the recipe list after saving
+//     getRecipes();
+
+// }
+
+
+// /**
+//  * Asynchronous function to handle the deletion of a recipe.
+//  */
+// async function deleteRecipe() {
+//     console.log("deleteRecipe()");
     
-    // Build JSON object for the recipe to be deleted
-    console.log(document.querySelector('#delete-modal-recipe-id').value)
-    const deleteRecipe = {
-        "id": parseInt(document.querySelector('#delete-modal-recipe-id').value),
-        "recipeTitle": document.querySelector('#delete-recipe-name').value,
-        "recipeBody": document.querySelector('#delete-recipe-body').value,
-        "recipeIngredients": document.querySelector('#delete-recipe-ingredients').value,
-    };
+//     // Build JSON object for the recipe to be deleted
+//     console.log(document.querySelector('#delete-modal-recipe-id').value)
+//     const deleteRecipe = {
+//         "id": parseInt(document.querySelector('#delete-modal-recipe-id').value),
+//         "recipeTitle": document.querySelector('#delete-recipe-name').value,
+//         "recipeBody": document.querySelector('#delete-recipe-body').value,
+//         "recipeIngredients": document.querySelector('#delete-recipe-ingredients').value,
+//     };
 
-    // Send a DELETE request to the server
-    await fetch(API_URL + "/recipes/admin", makeOptions("DELETE", deleteRecipe, true));
+//     // Send a DELETE request to the server
+//     await fetch(API_URL + "/recipes/admin", makeOptions("DELETE", deleteRecipe, true));
 
-    // Refresh the recipe list after deletion
-    getRecipes();
-}
+//     // Refresh the recipe list after deletion
+//     getRecipes();
+// }
 async function createRecipe(){
-
+const products = await fetch(API_URL + "/stores/products", makeOptions("GET", null, true)).then(r => handleHttpErrors(r));
 var addButton = document.querySelector('.inputFieldButton');
 var removeButton = document.querySelector('.removeFieldButton');
 addButton.addEventListener('click', function () {
@@ -153,6 +153,16 @@ removeButton.addEventListener('click', function () {
         alert('You must have at least one ingredient.');
     }
 });
+var existingSelect = document.querySelector('#ingredientFields select');
+    
+// Populate existing select with products
+products.forEach(product => {
+    var option = document.createElement('option');
+    option.value = product.description;
+    option.text = product.description;
+    existingSelect.appendChild(option);
+});
+
 function addIngredientField() {
     var ingredientFields = document.getElementById('ingredientFields');
 
@@ -160,36 +170,33 @@ function addIngredientField() {
     newInputGroup.className = 'input-group mb-3';
 
     var newSelect = document.createElement('select');
-    newSelect.className = 'form-select form-select-lg'; // You can adjust the class as needed
+    newSelect.className = 'form-select form-select-lg';
     newSelect.setAttribute('aria-label', '.form-select-lg example');
 
-    // You can add options dynamically if needed
     var option1 = document.createElement('option');
     option1.value = '';
-    option1.text = '';
+    option1.text = 'Vælg et produkt';
     newSelect.appendChild(option1);
-
-    var option2 = document.createElement('option');
-    option2.value = '';
-    option2.text = '';
-    newSelect.appendChild(option2);
-
-    // Add the select element to the input group
     newInputGroup.appendChild(newSelect);
     ingredientFields.appendChild(newInputGroup);
+    products.forEach(product => {
+        var option = document.createElement('option');
+        option.value = product.description;
+        option.text = product.description;
+        newSelect.appendChild(option);
+    });
 }
 function removeIngredientField() {
     var ingredientFields = document.getElementById('ingredientFields');
     ingredientFields.removeChild(ingredientFields.lastElementChild);
 }
 
-
 document.querySelector('#createRecipeButton').addEventListener('click', function () {        
     var closeButton = document.querySelector('#recipeCreateModal [data-bs-dismiss="modal"]');
     closeButton.click();
-    const ingredientsInputs = document.querySelectorAll('#ingredientFields input');
-    ingredients = Array.from(ingredientsInputs).map(input => input.value).join(', ');
-    console.log(ingredients + "-------- fra input fields");
-    router.navigate(`/createRecipe/`);
+    const selectInputs = document.querySelectorAll('#ingredientFields select');
+    ingredients = Array.from(selectInputs).map(select => select.value).join(', ');
+    console.log(ingredients + "-------- fra select fields");
+    router.navigate(`/create-recipe/`);
     });
 }
