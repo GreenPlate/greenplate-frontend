@@ -11,18 +11,8 @@ export async function initDashboard() {
 
 async function fetchZipCount() {
   // Replace with real fetch call
-  const zipCountArray = [
-    { zipcode: 1234, count: 110 },
-    { zipcode: 5678, count: 25 },
-    { zipcode: 3333, count: 42 },
-    { zipcode: 9500, count: 10 },
-    { zipcode: 7777, count: 15 },
-    { zipcode: 5555, count: 8 },
-    { zipcode: 8000, count: 9 },
-    { zipcode: 1111, count: 7 },
-    { zipcode: 9999, count: 3 },
-    { zipcode: 2500, count: 0 },
-  ];
+
+  const zipCountArray = await fetch(API_URL + "/stores/countzipcodecalls", makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
 
   const zipCountRows = zipCountArray
     .map(
@@ -72,9 +62,7 @@ function createZipCountChart(zipCountArray) {
 }
 
 async function fetchStoreCount() {
-  // Replace with real fetch call
-  
-  const storeCountArray = await fetch(API_URL + "/stores/count", makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
+  const storeCountArray = await fetch(API_URL + "/stores/countstorecalls", makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
   
   const storeCountRows = storeCountArray
     .map(
