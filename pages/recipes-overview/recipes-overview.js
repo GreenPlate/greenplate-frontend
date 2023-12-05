@@ -1,7 +1,8 @@
 import { API_URL } from "./../../settings.js"
 import { handleHttpErrors, makeOptions, sanitizeStringWithTableRows } from "./../../utility.js"
 
-export let ingredients = "";
+ export let ingredients = "";
+ export let selectedOffers = [];
 var maxFields = 5;
 var currentFields = 1;
 /**
@@ -133,70 +134,184 @@ export async function initRecipesOverview() {
 //     // Refresh the recipe list after deletion
 //     getRecipes();
 // }
-async function createRecipe(){
-const products = await fetch(API_URL + "/stores/products", makeOptions("GET", null, true)).then(r => handleHttpErrors(r));
-var addButton = document.querySelector('.inputFieldButton');
-var removeButton = document.querySelector('.removeFieldButton');
-addButton.addEventListener('click', function () {
-    if (currentFields < maxFields) {
-        addIngredientField();
-        currentFields++;
-    } else {
-        alert('You can only add up to 5 ingredients.');
-    }
-});
-removeButton.addEventListener('click', function () {
-    if (currentFields > 1) {
-        removeIngredientField();
-        currentFields--;
-    } else {
-        alert('You must have at least one ingredient.');
-    }
-});
-var existingSelect = document.querySelector('#ingredientFields select');
+
+
+// async function createRecipe(){
+// const offers = await fetch(API_URL + "/stores/products", makeOptions("GET", null, true)).then(r => handleHttpErrors(r));
+// var addButton = document.querySelector('.inputFieldButton');
+// var removeButton = document.querySelector('.removeFieldButton');
+// addButton.addEventListener('click', function () {
+//     if (currentFields < maxFields) {
+//         addIngredientField();
+//         currentFields++;
+//     } else {
+//         alert('You can only add up to 5 ingredients.');
+//     }
+// });
+// removeButton.addEventListener('click', function () {
+//     if (currentFields > 1) {
+//         removeIngredientField();
+//         currentFields--;
+//     } else {
+//         alert('You must have at least one ingredient.');
+//     }
+// });
+// var existingSelect = document.querySelector('#ingredientFields select');
     
-// Populate existing select with products
-products.forEach(product => {
-    var option = document.createElement('option');
-    option.value = product.description;
-    option.text = product.description;
-    existingSelect.appendChild(option);
-});
+// // Populate existing select with offers
+// offers.forEach(offer => {
+//     var option = document.createElement('option');
+//     var offerId = offer[0];
+//     var offerDescription = offer[1];
+//     option.value = offerId + ' - ' + offerDescription;
+//     option.text = offerDescription;
+//     existingSelect.appendChild(option);
+// });
 
-function addIngredientField() {
-    var ingredientFields = document.getElementById('ingredientFields');
+// function addIngredientField() {
+//     var ingredientFields = document.getElementById('ingredientFields');
 
-    var newInputGroup = document.createElement('div');
-    newInputGroup.className = 'input-group mb-3';
+//     var newInputGroup = document.createElement('div');
+//     newInputGroup.className = 'input-group mb-3';
 
-    var newSelect = document.createElement('select');
-    newSelect.className = 'form-select form-select-lg';
-    newSelect.setAttribute('aria-label', '.form-select-lg example');
+//     var newSelect = document.createElement('select');
+//     newSelect.className = 'form-select form-select-lg';
+//     newSelect.setAttribute('aria-label', '.form-select-lg example');
 
-    var option1 = document.createElement('option');
-    option1.value = '';
-    option1.text = 'Vælg et produkt';
-    newSelect.appendChild(option1);
-    newInputGroup.appendChild(newSelect);
-    ingredientFields.appendChild(newInputGroup);
-    products.forEach(product => {
-        var option = document.createElement('option');
-        option.value = product.description;
-        option.text = product.description;
-        newSelect.appendChild(option);
+//     var option1 = document.createElement('option');
+//     option1.value = '';
+//     option1.text = 'Vælg et produkt';
+//     newSelect.appendChild(option1);
+//     newInputGroup.appendChild(newSelect);
+//     ingredientFields.appendChild(newInputGroup);
+//     offers.forEach(offer => {
+//         var option = document.createElement('option');
+//         var offerId = offer[0];
+//         var offerDescription = offer[1];
+//         option.value = offerId + ' - ' + offerDescription;
+//         option.text = offerDescription;
+//         newSelect.appendChild(option);
+//         console.log(option.value)
+//     });
+// }
+// function removeIngredientField() {
+//     var ingredientFields = document.getElementById('ingredientFields');
+//     ingredientFields.removeChild(ingredientFields.lastElementChild);
+// }
+
+// document.querySelector('#createRecipeButton').addEventListener('click', function () {        
+//     var closeButton = document.querySelector('#recipeCreateModal [data-bs-dismiss="modal"]');
+//     const selectInputs = document.querySelectorAll('#ingredientFields select');
+//     selectedOffers = Array.from(selectInputs).map(select => {
+//         const [id, description] = select.value.split(' - ');
+//         return { id, description };
+//     });
+//     console.log(selectedOffers + "-------- fra select fields");
+//     closeButton.click();
+//     router.navigate(`/create-recipe/`);
+//     });
+// }
+async function createRecipe() {
+    const offers = await fetch(API_URL + "/stores/products", makeOptions("GET", null, true)).then(r => handleHttpErrors(r));
+    var addButton = document.querySelector('.inputFieldButton');
+    var removeButton = document.querySelector('.removeFieldButton');
+
+    addButton.addEventListener('click', function () {
+        if (currentFields < maxFields) {
+            addIngredientField();
+            currentFields++;
+        } else {
+            alert('You can only add up to 5 ingredients.');
+        }
     });
-}
-function removeIngredientField() {
-    var ingredientFields = document.getElementById('ingredientFields');
-    ingredientFields.removeChild(ingredientFields.lastElementChild);
-}
 
-document.querySelector('#createRecipeButton').addEventListener('click', function () {        
-    var closeButton = document.querySelector('#recipeCreateModal [data-bs-dismiss="modal"]');
-    closeButton.click();
-    const selectInputs = document.querySelectorAll('#ingredientFields select');
-    ingredients = Array.from(selectInputs).map(select => select.value).join(', ');
-    console.log(ingredients + "-------- fra select fields");
-    router.navigate(`/create-recipe/`);
+    removeButton.addEventListener('click', function () {
+        if (currentFields > 1) {
+            removeIngredientField();
+            currentFields--;
+        } else {
+            alert('You must have at least one ingredient.');
+        }
+    });
+
+    var existingSelect = document.querySelector('#ingredientFields select');
+
+    // Populate existing select with offers
+    offers.forEach(offer => {
+        var option = document.createElement('option');
+        // var description = offer[7];
+        // var offerObject = {
+        // id: offer[0],
+        // discount: offer[1],
+        // new_price: offer[2],
+        // originalPrice: offer[3],
+        // percentDiscount: offer[4],
+        // ean: offer[5],
+        // requestId: offer[6],
+        // description: offer[7]
+    // }
+        // option.value = offerObject;
+        option.value = JSON.stringify(offer);
+        option.text = offer[7];
+        existingSelect.appendChild(option);
+    
+    });
+
+    function addIngredientField() {
+        var ingredientFields = document.getElementById('ingredientFields');
+
+        var newInputGroup = document.createElement('div');
+        newInputGroup.className = 'input-group mb-3';
+
+        var newSelect = document.createElement('select');
+        newSelect.className = 'form-select form-select-lg';
+        newSelect.setAttribute('aria-label', '.form-select-lg example');
+
+        var option1 = document.createElement('option');
+        option1.value = '';
+        option1.text = 'Vælg et produkt';
+        newSelect.appendChild(option1);
+        newInputGroup.appendChild(newSelect);
+        ingredientFields.appendChild(newInputGroup);
+
+        offers.forEach(offer => {
+            var option = document.createElement('option');
+            // var description = offer[7];
+            // var offerObject = {
+            // id: offer[0],
+            // discount: offer[1],
+            // new_price: offer[2],
+            // originalPrice: offer[3],
+            // percentDiscount: offer[4],
+            // ean: offer[5],
+            // requestId: offer[6],
+            // description: offer[7]
+        // }
+            // option.value = offerObject;
+            option.value = JSON.stringify(offer);
+            option.text = offer[7];
+            newSelect.appendChild(option);
+        });
+    }
+
+    function removeIngredientField() {
+        var ingredientFields = document.getElementById('ingredientFields');
+        ingredientFields.removeChild(ingredientFields.lastElementChild);
+    }
+
+    document.querySelector('#createRecipeButton').addEventListener('click', function () {
+        var closeButton = document.querySelector('#recipeCreateModal [data-bs-dismiss="modal"]');
+        const selectInputs = document.querySelectorAll('#ingredientFields select');
+        // selectedOffers = Array.from(selectInputs).map(select => {
+        //     const [id, description] = select.value.split(' - ');
+        //     return { id, description };
+        // });
+        selectedOffers = Array.from(selectInputs).map(select => {
+            const offerObject = JSON.parse(select.value);
+            return offerObject;
+        });
+        console.log(selectedOffers);
+        closeButton.click();
+        router.navigate(`/create-recipe/`);
     });
 }
