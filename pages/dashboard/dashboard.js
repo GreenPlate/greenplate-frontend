@@ -1,3 +1,6 @@
+import {API_URL} from "../../settings.js"
+import { handleHttpErrors, makeOptions, sanitizeStringWithTableRows, sanitizer } from "./../../utility.js"
+
 export async function initDashboard() {
   console.log("initDashboard()");
 
@@ -70,19 +73,14 @@ function createZipCountChart(zipCountArray) {
 
 async function fetchStoreCount() {
   // Replace with real fetch call
-  const storeCountArray = [
-    { store: "Store A", count: 30 },
-    { store: "Store B", count: 20 },
-    { store: "Store C", count: 15 },
-    { store: "Store D", count: 12 },
-    { store: "Store E", count: 5 },
-  ];
-
+  
+  const storeCountArray = await fetch(API_URL + "/stores/count", makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
+  
   const storeCountRows = storeCountArray
     .map(
       (storeCount) => `
           <tr>
-              <th scope="row">${storeCount.store}</th>
+              <th scope="row">${storeCount.name}</th>
               <td>${storeCount.count}</td>
           </tr>
       `
@@ -94,7 +92,7 @@ async function fetchStoreCount() {
 }
 
 function createStoreChart(storeCountArray) {
-  const storeNames = storeCountArray.map((entry) => entry.store);
+  const storeNames = storeCountArray.map((entry) => entry.name);
   const storeCounts = storeCountArray.map((entry) => entry.count);
 
   const storeChartCtx = document
