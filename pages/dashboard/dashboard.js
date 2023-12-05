@@ -114,13 +114,8 @@ function createStoreChart(storeCountArray) {
 
 async function fetchProductCount() {
   // Replace with real fetch call
-  const productCountArray = [
-    { name: "Product A", ean: "1234567890123", count: 50 },
-    { name: "Product B", ean: "9876543210987", count: 25 },
-    { name: "Product C", ean: "4567890123456", count: 10 },
-    { name: "Product D", ean: "3210987654321", count: 30 },
-    { name: "Product E", ean: "7890123456789", count: 15 },
-  ];
+  
+  const productCountArray = await fetch(API_URL + "/products/count", makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
 
   const productCountRows = productCountArray
     .map(
