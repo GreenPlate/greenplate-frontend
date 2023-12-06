@@ -8,7 +8,6 @@ var currentFields = 1;
  * Initiates the recipes overview by fetching and displaying recipes.
  */
 export async function initRecipesOverview() {
-    console.log("initRecipesOverview()")
     // Fetch and display recipes
     getRecipes();
     createRecipe();
@@ -16,7 +15,6 @@ export async function initRecipesOverview() {
 
 
 async function getRecipes(){
-    console.log("getRecipes()")
     // fetch recipes from database
     const recipes = await fetch(API_URL + "/recipes/admin", makeOptions("GET", null, true)).then(r => handleHttpErrors(r));
 
@@ -44,7 +42,6 @@ async function getRecipes(){
 
             if (action === 'ændre opskrift') {
                 // Handle change button click
-                console.log(`Change recipe with ID ${recipeId}`);
 
                  // Find the selected recipe based on the recipeId
                  const selectedRecipe = recipes.find(recipe => recipe.id === parseInt(recipeId));
@@ -60,7 +57,6 @@ async function getRecipes(){
 
             } else if (action === 'slet opskrift') {
                 // Handle delete button click
-                console.log(`Delete recipe with ID ${recipeId}`);
 
                 // Find the selected recipe based on the recipeId
                 const selectedRecipe = recipes.find(recipe => recipe.id === parseInt(recipeId));
@@ -91,7 +87,6 @@ async function getRecipes(){
  * Asynchronous function to handle saving or updating a recipe.
  */
 async function saveRecipe() {
-    console.log("saveRecipe()");
 
     // Build JSON object for the recipe to be saved or updated
     const patchRecipe = {
@@ -114,10 +109,8 @@ async function saveRecipe() {
  * Asynchronous function to handle the deletion of a recipe.
  */
 async function deleteRecipe() {
-    console.log("deleteRecipe()");
     
     // Build JSON object for the recipe to be deleted
-    console.log(document.querySelector('#delete-modal-recipe-id').value)
     const deleteRecipe = {
         "id": parseInt(document.querySelector('#delete-modal-recipe-id').value),
         "recipeTitle": document.querySelector('#delete-recipe-name').value,
@@ -176,7 +169,6 @@ document.querySelector('#createRecipeButton').addEventListener('click', function
     closeButton.click();
     const ingredientsInputs = document.querySelectorAll('#ingredientFields input');
     ingredients = Array.from(ingredientsInputs).map(input => input.value).join(', ');
-    console.log(ingredients + "-------- fra input fields");
     router.navigate(`/createRecipe/`);
     });
 }
