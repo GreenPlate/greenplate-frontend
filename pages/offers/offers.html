@@ -1,8 +1,8 @@
 <div class="template">
-  <div id="filters">
-    <b class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasfilters" aria-controls="offcanvasExample">
+  <div id="sorts" class="position-fixed z-2">
+    <!-- <b class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvassorts" aria-controls="offcanvasExample">
         filtre 
-      </b>
+      </b> -->
 </div>
     <div class="container mt-4 mt-4 mx-auto d-flex align-items-center justify-content-around">
        <div id="offer-cards" class="row justify-content-around" style="visibility: hidden;"></div>
@@ -50,26 +50,33 @@
       <ul class="pagination" id="pagination"></ul>
       
 
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasfilters" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvassorts" aria-labelledby="offcanvasExampleLabel">
         <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-        <div>
-           <p> Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.</p>
+        <div id="sorts-and-sorting">
+          <div class="mb-3">
+            
+              Søg efter
+            <label for="search-input" class="form-label">Example label</label>
+            <input type="text" class="form-control" id="search-input" placeholder="Example input placeholder">
+            <div id="range-value">
+              
+            </div>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="offcanvas" id="searchselection">Søg</button>
+          </div>
+          <div class="dropdown mt-3">
+            <label for="sorting-input"class="form-label">Sorter efter</label>         
+            <select class="form-select" id="sorting-input">
+              <option value=""selected>Sorter efter</option>
+              <option value="percentDiscount" id="sort_1">bedste tilbud</option>
+              <option value="newPrice"  id="sort_2">pris</option>
+              <option value="description"  id="sort_3">alfabetisk</option>
+            </select>
+          </div>
         </div>
-        
-        <!-- <div class="dropdown mt-3">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-              Dropdown
-            </button>
-            <ul class="dropdown-menu">
-              <li><button class="dropdown-item" type="button" id="filter_1">Action</button></li>
-              <li><button class="dropdown-item" type="button" id="filter_2">Another action</button></li>
-              <li><button class="dropdown-item" type="button" id="filter_3">Something else here</button></li>
-            </ul>
-          </div> -->
         </div>
     </div>
 </div>
