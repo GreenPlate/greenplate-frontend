@@ -8,6 +8,7 @@ var currentFields = 1;
  * Initiates the recipes overview by fetching and displaying recipes.
  */
 export async function initRecipesOverview() {
+    console.log("initRecipesOverview()")
     // Fetch and display recipes
     getRecipes();
     createRecipe();
@@ -15,6 +16,7 @@ export async function initRecipesOverview() {
 
 
 async function getRecipes(){
+    console.log("getRecipes()")
     // fetch recipes from database
     const recipes = await fetch(API_URL + "/recipes/admin", makeOptions("GET", null, true)).then(r => handleHttpErrors(r));
 
