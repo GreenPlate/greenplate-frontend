@@ -43,19 +43,20 @@ export async function initOffers(match){
     document.querySelector('#close-canvas-button').addEventListener('click', function () {
         visibilityToggle(false);
     });
-   
+    document.querySelector("#searchselection").addEventListener("click", searchAndSort);
 }
 
-async function getOffers(pageNumber,filteredOffersList) {
+async function getOffers(pageNumber,searchOffersList) {
     const pageSize = 8;
     const offerCardsContainer = document.querySelector("#offer-cards");
 
     offerCardsContainer.style.visibility = "visible";
-    if(filteredOffersList){
-                offersList=filteredOffersList
+    if(searchOffersList){
+                offersList=searchOffersList
             }else{
             offersList= await fetch(URL2+"?id="+storeId,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))//.then(data=>data.offers) //tilføjet sidste .then
-            }   
+            filteredOffersList=offersList.map(offer => offer);
+        }   
 
     const { minPrice, maxPrice } = calculateMinMaxPrice(offersList);
 
@@ -391,21 +392,26 @@ function handlePaginationClick(evt) {
 //   return filteredofferslist;
 // }
 function searchAndSort() {
-    const searchButton = document.getElementById('searchselection');
+  //  const searchButton = document.getElementById('searchselection');
     let sortedData=[];
-
-    searchButton.addEventListener('click', function () {
+    var filteredData=[];
+  //  searchButton.addEventListener('click', function () {
         const searchInput = document.getElementById('search-input').value.toLowerCase();
         const fromPrice = parseFloat(document.getElementById('from-price').value);
         const toPrice = parseFloat(document.getElementById('to-price').value);
         const sortingInput = document.getElementById('sorting-input').value;
-
-        const filteredData = offersList.filter(offer => {
+        if(searchInput!==""){
+         filteredData = offersList.filter(offer => {
             const meetsPriceCriteria = offer.newPrice >= fromPrice && offer.newPrice <= toPrice;
-            const meetsSearchCriteria = searchInput === '' || offer.description.toLowerCase().includes(searchInput);
+            const meetsSearchCriteria = offer.description.toLowerCase().includes(searchInput);
 
             return meetsPriceCriteria && meetsSearchCriteria;
-        });
+        });}else{
+             filteredData = filteredOffersList .filter(offer => {
+                const meetsPriceCriteria = offer.newPrice >= fromPrice && offer.newPrice <= toPrice;
+                return meetsPriceCriteria;
+            });
+        }
 
         //sortedData=[];
         if (sortingInput !== '') {
@@ -423,6 +429,6 @@ function searchAndSort() {
         //filteredOffersList= sortedData.map(offer => offer);
         getOffers(0, sortedData);
        
-    });
+  //  });
    
 }
