@@ -25,7 +25,6 @@ async function getRecipes(){
         <div class="custom-card mt-2">
             <div class="card-body">
                 <h5 class="card-title">${recipe.recipeTitle}</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">${recipe.recipeIngredients}</h6>
                 <p class="card-text">${recipe.recipeBody}<p>
                 <button id="${recipe.id}_recipeid" href="#" class="card-link">Ændre opskrift</button>
                 <button id="${recipe.id}_recipeid" href="#" class="card-link">Slet opskrift</button>
@@ -53,7 +52,6 @@ async function getRecipes(){
                 // Populate the modal with recipe information
                 document.getElementById('modal-recipe-id').value = selectedRecipe.id;
                 document.getElementById('recipe-name').value = selectedRecipe.recipeTitle;
-                document.getElementById('recipe-ingredients').value = selectedRecipe.recipeIngredients;
                 document.getElementById('recipe-body').value = selectedRecipe.recipeBody;
  
                  // Open the modal
@@ -70,7 +68,6 @@ async function getRecipes(){
                 // Populate the modal with recipe information
                 document.getElementById('delete-modal-recipe-id').value = selectedRecipe.id;
                 document.getElementById('delete-recipe-name').value = selectedRecipe.recipeTitle;
-                document.getElementById('delete-recipe-ingredients').value = selectedRecipe.recipeIngredients;
                 document.getElementById('delete-recipe-body').value = selectedRecipe.recipeBody;
 
                 // Open the modal
@@ -101,7 +98,6 @@ async function saveRecipe() {
         "id": document.querySelector('#modal-recipe-id').value,
         "recipeTitle": document.querySelector('#recipe-name').value,
         "recipeBody": document.querySelector('#recipe-body').value,
-        "recipeIngredients": document.querySelector('#recipe-ingredients').value,
     };
 
     // Send a PATCH request to the server to save or update the recipe
@@ -126,7 +122,6 @@ async function deleteRecipe() {
         "id": parseInt(document.querySelector('#delete-modal-recipe-id').value),
         "recipeTitle": document.querySelector('#delete-recipe-name').value,
         "recipeBody": document.querySelector('#delete-recipe-body').value,
-        "recipeIngredients": document.querySelector('#delete-recipe-ingredients').value,
     };
 
     // Send a DELETE request to the server
