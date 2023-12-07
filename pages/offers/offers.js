@@ -40,6 +40,7 @@ export async function initOffers(match){
     selectedCards = [];
     cardsToCanvas(storeData);
     document.querySelector('#recipe-button').addEventListener('click', createRecipe)
+    document.querySelector('#save-shop-list').addEventListener('click', saveShoppingList)
     document.querySelector('#close-canvas-button').addEventListener('click', function () {
         visibilityToggle(false);
     });
@@ -183,7 +184,6 @@ async function cardsToCanvas(storeData){
         </div>
     `).join("")
     document.querySelector('#store_data').innerHTML = sanitizeStringWithTableRows(store);
-    
     if(selectedCards.length >= 3){
         document.querySelector('#placeholdertext').innerHTML = ""
     }
@@ -201,6 +201,15 @@ async function cardsToCanvas(storeData){
         </div>
     `}).join("");
     document.querySelector('#canvas-cards').innerHTML = sanitizeStringWithTableRows(cards);
+    const modal_data = selectedCards.map((content) => { return`
+        <div class="container">
+            <div class="row justify-content-center">
+            <div class="col text-truncate text-start" style="max-width: 60%">${content.description}</div>
+            <div class="col text-center" style="max-width: 25%">${content.newPrice}</div>
+            </div>
+        </div>    
+    `}).join("");
+    document.querySelector('#shopping-modal-body').innerHTML = sanitizer(modal_data);
     if(!selectedCards.length == 0){
         const totalPriceSectionExists = document.querySelector('#canvas-cards').innerHTML.includes('Total pris');
         const totalPrice = selectedCards.reduce((sum, card) => sum + parseFloat(card.newPrice), 0);
@@ -273,6 +282,7 @@ function userAuthenticated(){
         return;
     }
     document.querySelector('#recipe-button').classList.remove("invisible");
+    document.querySelector('#shoplist-button').classList.remove("invisible");
 }
 
 function setupOffcanvas(){
@@ -317,6 +327,21 @@ function handlePaginationClick(evt) {
       getOffers(page);
     }
   }
+
+function saveShoppingList(){
+    if(selectedCards.length < 1){
+        document.querySelector('#error-msg-shoplist').innerHTML = "Vælg mindst 1 produkt.";
+        return;
+    }
+    else{
+        const requestBody = {
+            "offers": selectedCards
+        }
+        document.querySelector('#close-list-inside').click()
+        fetch(API_URL+"/shopping-list/save-shopping-list", makeOptions("POST", requestBody, true)).then(r =>handleHttpErrors(r))
+        router.navigate("/profile")
+    }
+}  
 //     function setFilters() {
 //     let filteredOffersList = offersList;
 

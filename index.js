@@ -11,6 +11,7 @@ import { initOffers } from "./pages/offers/offers.js";
 import { initRecipesOverview } from "./pages/recipes-overview/recipes-overview.js";
 import { initCreateRecipe } from "./pages/createRecipe/create-recipe.js";
 import { initDashboard } from "./pages/dashboard/dashboard.js";
+import { initProfile} from "./pages/profile/profile.js";
 
 window.addEventListener("load", async () => {
   const templateHome = await loadHtml("./pages/home/home.html");
@@ -23,6 +24,7 @@ window.addEventListener("load", async () => {
   const templateRecipesOverview = await loadHtml("./pages/recipes-overview/recipes-overview.html");
   const templateCreateRecipe = await loadHtml("./pages/createRecipe/create-recipe.html");
   const templateDashboard = await loadHtml("./pages/dashboard/dashboard.html");
+  const templateProfile = await loadHtml("./pages/profile/profile.html");
 
   //If token existed, for example after a refresh, set UI accordingly
   const token = localStorage.getItem("token");
@@ -78,6 +80,10 @@ window.addEventListener("load", async () => {
       "/dashboard": ()=>{
         renderHtml(templateDashboard, "content");
         initDashboard();
+      },
+      "/profile": ()=>{
+        renderHtml(templateProfile, "content");
+        initProfile();
       }
     })
     .notFound(() => {
