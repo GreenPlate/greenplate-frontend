@@ -1,3 +1,6 @@
+import {API_URL} from "../../settings.js"
+import { handleHttpErrors, makeOptions, sanitizeStringWithTableRows, sanitizer } from "./../../utility.js"
+
 export async function initDashboard() {
   console.log("initDashboard()");
 
@@ -8,18 +11,8 @@ export async function initDashboard() {
 
 async function fetchZipCount() {
   // Replace with real fetch call
-  const zipCountArray = [
-    { zipcode: 1234, count: 110 },
-    { zipcode: 5678, count: 25 },
-    { zipcode: 3333, count: 42 },
-    { zipcode: 9500, count: 10 },
-    { zipcode: 7777, count: 15 },
-    { zipcode: 5555, count: 8 },
-    { zipcode: 8000, count: 9 },
-    { zipcode: 1111, count: 7 },
-    { zipcode: 9999, count: 3 },
-    { zipcode: 2500, count: 0 },
-  ];
+
+  const zipCountArray = await fetch(API_URL + "/stores/countzipcodecalls", makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
 
   const zipCountRows = zipCountArray
     .map(
@@ -69,20 +62,13 @@ function createZipCountChart(zipCountArray) {
 }
 
 async function fetchStoreCount() {
-  // Replace with real fetch call
-  const storeCountArray = [
-    { store: "Store A", count: 30 },
-    { store: "Store B", count: 20 },
-    { store: "Store C", count: 15 },
-    { store: "Store D", count: 12 },
-    { store: "Store E", count: 5 },
-  ];
-
+  const storeCountArray = await fetch(API_URL + "/stores/countstorecalls", makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
+  
   const storeCountRows = storeCountArray
     .map(
       (storeCount) => `
           <tr>
-              <th scope="row">${storeCount.store}</th>
+              <th scope="row">${storeCount.name}</th>
               <td>${storeCount.count}</td>
           </tr>
       `
@@ -94,7 +80,7 @@ async function fetchStoreCount() {
 }
 
 function createStoreChart(storeCountArray) {
-  const storeNames = storeCountArray.map((entry) => entry.store);
+  const storeNames = storeCountArray.map((entry) => entry.name);
   const storeCounts = storeCountArray.map((entry) => entry.count);
 
   const storeChartCtx = document
@@ -128,13 +114,8 @@ function createStoreChart(storeCountArray) {
 
 async function fetchProductCount() {
   // Replace with real fetch call
-  const productCountArray = [
-    { name: "Product A", ean: "1234567890123", count: 50 },
-    { name: "Product B", ean: "9876543210987", count: 25 },
-    { name: "Product C", ean: "4567890123456", count: 10 },
-    { name: "Product D", ean: "3210987654321", count: 30 },
-    { name: "Product E", ean: "7890123456789", count: 15 },
-  ];
+  
+  const productCountArray = await fetch(API_URL + "/products/count", makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
 
   const productCountRows = productCountArray
     .map(
