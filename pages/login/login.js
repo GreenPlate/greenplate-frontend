@@ -7,6 +7,8 @@ export function initLogin(match) {
 }
 
 async function login() {
+  event.preventDefault();
+  
   document.querySelector("#login-fail").innerText = "";
   const userNameInput = document.querySelector("#username");
   const passwordInput = document.querySelector("#password");
@@ -15,6 +17,8 @@ async function login() {
     username: userNameInput.value,
     password: passwordInput.value,
   };
+
+
   const options = {
     method: "POST",
     headers: { "Content-type": "application/json" },
@@ -24,6 +28,7 @@ async function login() {
     const res = await fetch(API_URL + "/auth/login", options).then((r) =>
       handleHttpErrors(r)
     );
+
     storeLoginDetails(res);
     window.router.navigate("/");
   } catch (err) {

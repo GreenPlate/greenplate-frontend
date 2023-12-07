@@ -44,28 +44,23 @@ export async function initOffers(match){
     document.querySelector('#close-canvas-button').addEventListener('click', function () {
         visibilityToggle(false);
     });
-   
+    document.querySelector("#searchselection").addEventListener("click", searchAndSort);
 }
 
-async function getOffers(pageNumber,filteredOffersList) {
+async function getOffers(pageNumber,searchOffersList) {
     const pageSize = 8;
     const offerCardsContainer = document.querySelector("#offer-cards");
 
     offerCardsContainer.style.visibility = "visible";
-    if(filteredOffersList){
-                offersList=filteredOffersList
+    if(searchOffersList){
+                offersList=searchOffersList
             }else{
             offersList= await fetch(URL2+"?id="+storeId,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))//.then(data=>data.offers) //tilføjet sidste .then
-            }   
+            filteredOffersList=offersList.map(offer => offer);
+        }   
 
     const { minPrice, maxPrice } = calculateMinMaxPrice(offersList);
-
-    console.log("minimum pris: " + minPrice);
-    console.log("maximum pris: " + maxPrice);
-
     const countOffers = offersList.length;
-    console.log("no. of Offers: " + countOffers);
-
     const totalPages = Math.ceil(countOffers / pageSize);
     const offers = getPaginatedOffers(offersList, pageNumber, pageSize);
 
@@ -132,7 +127,17 @@ function addEventListeners(offers) {
         const clickedElement = event.target;
         const card = clickedElement.closest('.card');
         const checkbox = clickedElement.closest('.form-check-input');
-
+        if(selectedCards.length >= 5){
+            const modal = document.getElementById('selectionLimitModal');
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            document.body.classList.add('modal-blur');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+            }, 1000);
+            return;
+        }
         if (checkbox) {
             handleCheckboxChange(checkbox, offers);
         } else if (card) {
@@ -153,23 +158,10 @@ function addEventListeners(offers) {
 function handleCheckboxChange(checkbox, offers) {
     const card = checkbox.parentElement.parentElement.parentElement;
     const cardIndex = Array.from(card.parentElement.children).indexOf(card);
-    if (checkbox.checked&&selectedCards.length<=5) {
+    if (checkbox.checked&&selectedCards.length<=4) {
         selectedCards.push(offers[cardIndex]);
     } else {
         selectedCards = selectedCards.filter(card => card !== offers[cardIndex]);
-    }
-    if (selectedCards.length > 5) {
-        const modal = document.getElementById('selectionLimitModal');
-        modal.style.display = 'block';
-        modal.classList.add('show');
-        document.body.classList.add('modal-blur');
-        setTimeout(() => {
-            modal.style.display = 'none';
-            modal.classList.remove('show');
-        }, 1000);
-
-        checkbox.checked = false;
-        return;
     }
     cardsToCanvas(storeData);
 }
@@ -184,11 +176,11 @@ async function cardsToCanvas(storeData){
         </div>
     `).join("")
     document.querySelector('#store_data').innerHTML = sanitizeStringWithTableRows(store);
-    if(selectedCards.length >= 3){
+    if(selectedCards.length >= 1){
         document.querySelector('#placeholdertext').innerHTML = ""
     }
     else{
-        document.querySelector('#placeholdertext').innerHTML = "Hvis du er medlem kan du vælge 3-5 <br> produkter og få en opskrift lavet af en AI!"
+        document.querySelector('#placeholdertext').innerHTML = "Hvis du er medlem kan du vælge 1-5 <br> produkter og få en opskrift lavet af en AI!"
     }
     document.querySelector('#number-canvas').innerHTML = listAmount;
     const cards = selectedCards.map((card) => {
@@ -328,7 +320,7 @@ function handlePaginationClick(evt) {
     }
   }
 
-function saveShoppingList(){
+async function saveShoppingList(){
     if(selectedCards.length < 1){
         document.querySelector('#error-msg-shoplist').innerHTML = "Vælg mindst 1 produkt.";
         return;
@@ -338,7 +330,7 @@ function saveShoppingList(){
             "offers": selectedCards
         }
         document.querySelector('#close-list-inside').click()
-        fetch(API_URL+"/shopping-list/save-shopping-list", makeOptions("POST", requestBody, true)).then(r =>handleHttpErrors(r))
+        await fetch(API_URL+"/shopping-list/save-shopping-list", makeOptions("POST", requestBody, true)).then(r =>handleHttpErrors(r))
         router.navigate("/profile")
     }
 }  
@@ -416,21 +408,26 @@ function saveShoppingList(){
 //   return filteredofferslist;
 // }
 function searchAndSort() {
-    const searchButton = document.getElementById('searchselection');
+  //  const searchButton = document.getElementById('searchselection');
     let sortedData=[];
-
-    searchButton.addEventListener('click', function () {
+    var filteredData=[];
+  //  searchButton.addEventListener('click', function () {
         const searchInput = document.getElementById('search-input').value.toLowerCase();
         const fromPrice = parseFloat(document.getElementById('from-price').value);
         const toPrice = parseFloat(document.getElementById('to-price').value);
         const sortingInput = document.getElementById('sorting-input').value;
-
-        const filteredData = offersList.filter(offer => {
+        if(searchInput!==""){
+         filteredData = offersList.filter(offer => {
             const meetsPriceCriteria = offer.newPrice >= fromPrice && offer.newPrice <= toPrice;
-            const meetsSearchCriteria = searchInput === '' || offer.description.toLowerCase().includes(searchInput);
+            const meetsSearchCriteria = offer.description.toLowerCase().includes(searchInput);
 
             return meetsPriceCriteria && meetsSearchCriteria;
-        });
+        });}else{
+             filteredData = filteredOffersList .filter(offer => {
+                const meetsPriceCriteria = offer.newPrice >= fromPrice && offer.newPrice <= toPrice;
+                return meetsPriceCriteria;
+            });
+        }
 
         //sortedData=[];
         if (sortingInput !== '') {
@@ -448,6 +445,6 @@ function searchAndSort() {
         //filteredOffersList= sortedData.map(offer => offer);
         getOffers(0, sortedData);
        
-    });
+  //  });
    
 }
