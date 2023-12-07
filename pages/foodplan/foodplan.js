@@ -53,7 +53,11 @@ async function fetchRecipe(selectedCards){
     }
     function saveRecipe(recipeRequest){
         document.querySelector('#inside-close').click()
+        try{
         fetch(URL+"/save-recipe", makeOptions("POST", recipeRequest, true)).then(r =>handleHttpErrors(r))
+        }catch(error){
+            console.log(error)
+        }
         router.navigate("/")
     }
     
