@@ -60,13 +60,7 @@ async function getOffers(pageNumber,searchOffersList) {
         }   
 
     const { minPrice, maxPrice } = calculateMinMaxPrice(offersList);
-
-    console.log("minimum pris: " + minPrice);
-    console.log("maximum pris: " + maxPrice);
-
     const countOffers = offersList.length;
-    console.log("no. of Offers: " + countOffers);
-
     const totalPages = Math.ceil(countOffers / pageSize);
     const offers = getPaginatedOffers(offersList, pageNumber, pageSize);
 
@@ -133,7 +127,17 @@ function addEventListeners(offers) {
         const clickedElement = event.target;
         const card = clickedElement.closest('.card');
         const checkbox = clickedElement.closest('.form-check-input');
-
+        if(selectedCards.length >= 5){
+            const modal = document.getElementById('selectionLimitModal');
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            document.body.classList.add('modal-blur');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+            }, 1000);
+            return;
+        }
         if (checkbox) {
             handleCheckboxChange(checkbox, offers);
         } else if (card) {
@@ -152,13 +156,6 @@ function addEventListeners(offers) {
 
 
 function handleCheckboxChange(checkbox, offers) {
-    const card = checkbox.parentElement.parentElement.parentElement;
-    const cardIndex = Array.from(card.parentElement.children).indexOf(card);
-    if (checkbox.checked&&selectedCards.length<=5) {
-        selectedCards.push(offers[cardIndex]);
-    } else {
-        selectedCards = selectedCards.filter(card => card !== offers[cardIndex]);
-    }
     if (selectedCards.length > 5) {
         const modal = document.getElementById('selectionLimitModal');
         modal.style.display = 'block';
@@ -171,6 +168,13 @@ function handleCheckboxChange(checkbox, offers) {
 
         checkbox.checked = false;
         return;
+    }
+    const card = checkbox.parentElement.parentElement.parentElement;
+    const cardIndex = Array.from(card.parentElement.children).indexOf(card);
+    if (checkbox.checked&&selectedCards.length<=4) {
+        selectedCards.push(offers[cardIndex]);
+    } else {
+        selectedCards = selectedCards.filter(card => card !== offers[cardIndex]);
     }
     cardsToCanvas(storeData);
 }
@@ -185,11 +189,11 @@ async function cardsToCanvas(storeData){
         </div>
     `).join("")
     document.querySelector('#store_data').innerHTML = sanitizeStringWithTableRows(store);
-    if(selectedCards.length >= 3){
+    if(selectedCards.length >= 1){
         document.querySelector('#placeholdertext').innerHTML = ""
     }
     else{
-        document.querySelector('#placeholdertext').innerHTML = "Hvis du er medlem kan du vælge 3-5 <br> produkter og få en opskrift lavet af en AI!"
+        document.querySelector('#placeholdertext').innerHTML = "Hvis du er medlem kan du vælge 1-5 <br> produkter og få en opskrift lavet af en AI!"
     }
     document.querySelector('#number-canvas').innerHTML = listAmount;
     const cards = selectedCards.map((card) => {
