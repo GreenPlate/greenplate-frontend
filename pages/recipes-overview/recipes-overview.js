@@ -24,8 +24,8 @@ async function getRecipes(){
             <div class="card-body">
                 <h5 class="card-title">${recipe.recipeTitle}</h5>
                 <p class="card-text">${recipe.recipeBody}<p>
-                <button id="${recipe.id}_recipeid" href="#" class="card-link">Ændre opskrift</button>
-                <button id="${recipe.id}_recipeid" href="#" class="card-link">Slet opskrift</button>
+                <button id="${recipe.id}_recipeid" href="#" class="card-link btn-warning">Ændre opskrift</button>
+                <button id="${recipe.id}_recipeid" href="#" class="card-link btn-danger">Slet opskrift</button>
             </div>
         </div>
     `).join("");
