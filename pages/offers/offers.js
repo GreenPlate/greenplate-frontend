@@ -26,7 +26,7 @@ export async function initOffers(match){
         document.querySelector('#pagination').addEventListener('click', handlePaginationClick)       
       }
     getOffers(page);
-    setupOffcanvas();
+   setupOffcanvas();
     const offcanvas = document.querySelector('.offcanvas');
     offcanvas.classList.add('visible');
     document.querySelector('#canvas-hover').addEventListener('mouseover', function () {
@@ -59,7 +59,10 @@ async function getOffers(pageNumber,searchOffersList) {
             filteredOffersList=offersList.map(offer => offer);
         }   
 
-    const { minPrice, maxPrice } = calculateMinMaxPrice(offersList);
+    //const { minPrice, maxPrice } = calculateMinMaxPrice(offersList);
+    const newPrices = offersList.map(offer => offer.newPrice);
+    minPrice = Math.min(...newPrices);
+     maxPrice = Math.max(...newPrices);
     const countOffers = offersList.length;
     const totalPages = Math.ceil(countOffers / pageSize);
     const offers = getPaginatedOffers(offersList, pageNumber, pageSize);
@@ -74,8 +77,8 @@ async function getOffers(pageNumber,searchOffersList) {
 
 function calculateMinMaxPrice(offersList) {
     const newPrices = offersList.map(offer => offer.newPrice);
-    const minPrice = Math.min(...newPrices);
-    const maxPrice = Math.max(...newPrices);
+    minPrice = Math.min(...newPrices);
+     maxPrice = Math.max(...newPrices);
     return { minPrice, maxPrice };
 }
 
