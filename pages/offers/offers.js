@@ -156,19 +156,6 @@ function addEventListeners(offers) {
 
 
 function handleCheckboxChange(checkbox, offers) {
-    if (selectedCards.length > 5) {
-        const modal = document.getElementById('selectionLimitModal');
-        modal.style.display = 'block';
-        modal.classList.add('show');
-        document.body.classList.add('modal-blur');
-        setTimeout(() => {
-            modal.style.display = 'none';
-            modal.classList.remove('show');
-        }, 1000);
-
-        checkbox.checked = false;
-        return;
-    }
     const card = checkbox.parentElement.parentElement.parentElement;
     const cardIndex = Array.from(card.parentElement.children).indexOf(card);
     if (checkbox.checked&&selectedCards.length<=4) {
