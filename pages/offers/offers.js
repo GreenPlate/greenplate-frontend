@@ -414,10 +414,12 @@ function searchAndSort() {
   //  const searchButton = document.getElementById('searchselection');
     let sortedData=[];
     var filteredData=[];
+    var fromPrice;
+    var toPrice;
   //  searchButton.addEventListener('click', function () {
         const searchInput = document.getElementById('search-input').value.toLowerCase();
-        const fromPrice = parseFloat(document.getElementById('from-price').value);
-        const toPrice = parseFloat(document.getElementById('to-price').value);
+         fromPrice = parseFloat(document.getElementById('from-price').value);
+        toPrice = parseFloat(document.getElementById('to-price').value);
         const sortingInput = document.getElementById('sorting-input').value;
         if(searchInput!==""){
          filteredData = offersList.filter(offer => {
