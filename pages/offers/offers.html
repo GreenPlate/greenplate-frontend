@@ -34,8 +34,9 @@
             </div>
             <div class="row">
                 <div class="text-center" id="error_recipe_msg" style="color: red;"><br></div>
-                <button class="btn btn-primary text-center invisible" type="button" id="recipe-button">Lav en opskrift til mig ud fra produkter!</button>
-            </div>
+                <button class="btn btn-primary text-center invisible m-1" type="button" id="recipe-button">Lav en opskrift til mig ud fra produkter</button>
+                <button type="button" class="btn btn-primary text-center invisible m-1" id="shoplist-button" data-bs-toggle="modal" data-bs-target="#sl-modal">Gem opskrift på min profil</button>
+              </div>
         </div>
     </div>
     <div id="selectionLimitModal" class="modal" tabindex="-1" role="dialog">
@@ -78,6 +79,23 @@
           </div>
         </div>
         </div>
+    </div>
+    <div class="modal fade" id="sl-modal" tabindex="-1" aria-labelledby="sl-modal-label" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="sl-modal-label">Indkøbsliste oversigt</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" id="close-list-inside" aria-label="Close"></button>
+          </div>
+          <div id="error-msg-shoplist" class="text-center" style="color:red"></div>
+          <div id="shopping-modal-body">
+          </div>
+          <div class="modal-footer align-self-center justify-content-center">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tilbage til butikken</button>
+            <button type="button" class="btn btn-primary" id="save-shop-list">Gem denne indkøbsliste</button>
+          </div>
+        </div>
+      </div>
     </div>
 </div>
 
