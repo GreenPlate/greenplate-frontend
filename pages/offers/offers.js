@@ -320,7 +320,7 @@ function handlePaginationClick(evt) {
     }
   }
 
-function saveShoppingList(){
+async function saveShoppingList(){
     if(selectedCards.length < 1){
         document.querySelector('#error-msg-shoplist').innerHTML = "Vælg mindst 1 produkt.";
         return;
@@ -330,7 +330,7 @@ function saveShoppingList(){
             "offers": selectedCards
         }
         document.querySelector('#close-list-inside').click()
-        fetch(API_URL+"/shopping-list/save-shopping-list", makeOptions("POST", requestBody, true)).then(r =>handleHttpErrors(r))
+        await fetch(API_URL+"/shopping-list/save-shopping-list", makeOptions("POST", requestBody, true)).then(r =>handleHttpErrors(r))
         router.navigate("/profile")
     }
 }  

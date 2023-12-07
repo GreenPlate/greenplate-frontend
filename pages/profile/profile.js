@@ -42,7 +42,6 @@ function changeUserData(){
 async function fetchShoppingList(){
     const currentDate = new Date();
     shopping_list_data = await fetch(URL2+"/user-as-authenticated", makeOptions("GET", null, true)).then(handleHttpErrors);
-    console.log(shopping_list_data)
     const shopping_list_new = [];
     const shopping_list_old = [];
     shopping_list_data.forEach((list) => {
@@ -54,7 +53,7 @@ async function fetchShoppingList(){
             shopping_list_old.push(list);
         }
     });
-    const new_list = shopping_list_new.map((list, index) => {
+    const new_list = shopping_list_new.map((list) => {
     const shopName = list.offers[0].request.store.name;
     const shopAddress = `${list.offers[0].request.store.street}, ${list.offers[0].request.store.zip} ${list.offers[0].request.store.city}`;
     const date = new Date(list.createdAt).toISOString().split('T')[0];
@@ -80,7 +79,7 @@ async function fetchShoppingList(){
        document.querySelector('#new-list-field').innerHTML = sanitizer(new_list);
     }
     
-    const old_list = shopping_list_old.map((list, index) => {
+    const old_list = shopping_list_old.map((list) => {
         const shopName = list.offers[0].request.store.name;
         const shopAddress = `${list.offers[0].request.store.street}, ${list.offers[0].request.store.zip} ${list.offers[0].request.store.city}`;
         const date = new Date(list.createdAt).toISOString().split('T')[0];
