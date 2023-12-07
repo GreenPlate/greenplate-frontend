@@ -23,7 +23,6 @@ async function getRecipes(){
         <div class="custom-card mt-2">
             <div class="card-body">
                 <h5 class="card-title">${recipe.recipeTitle}</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">${recipe.recipeIngredients}</h6>
                 <p class="card-text">${recipe.recipeBody}<p>
                 <button id="${recipe.id}_recipeid" href="#" class="card-link">Ændre opskrift</button>
                 <button id="${recipe.id}_recipeid" href="#" class="card-link">Slet opskrift</button>
@@ -43,7 +42,6 @@ async function getRecipes(){
 
             if (action === 'ændre opskrift') {
                 // Handle change button click
-                console.log(`Change recipe with ID ${recipeId}`);
 
                  // Find the selected recipe based on the recipeId
                  const selectedRecipe = recipes.find(recipe => recipe.id === parseInt(recipeId));
@@ -51,7 +49,6 @@ async function getRecipes(){
                 // Populate the modal with recipe information
                 document.getElementById('modal-recipe-id').value = selectedRecipe.id;
                 document.getElementById('recipe-name').value = selectedRecipe.recipeTitle;
-                document.getElementById('recipe-ingredients').value = selectedRecipe.recipeIngredients;
                 document.getElementById('recipe-body').value = selectedRecipe.recipeBody;
  
                  // Open the modal
@@ -60,7 +57,6 @@ async function getRecipes(){
 
             } else if (action === 'slet opskrift') {
                 // Handle delete button click
-                console.log(`Delete recipe with ID ${recipeId}`);
 
                 // Find the selected recipe based on the recipeId
                 const selectedRecipe = recipes.find(recipe => recipe.id === parseInt(recipeId));
@@ -68,7 +64,6 @@ async function getRecipes(){
                 // Populate the modal with recipe information
                 document.getElementById('delete-modal-recipe-id').value = selectedRecipe.id;
                 document.getElementById('delete-recipe-name').value = selectedRecipe.recipeTitle;
-                document.getElementById('delete-recipe-ingredients').value = selectedRecipe.recipeIngredients;
                 document.getElementById('delete-recipe-body').value = selectedRecipe.recipeBody;
 
                 // Open the modal
@@ -92,14 +87,12 @@ async function getRecipes(){
  * Asynchronous function to handle saving or updating a recipe.
  */
 async function saveRecipe() {
-    console.log("saveRecipe()");
 
     // Build JSON object for the recipe to be saved or updated
     const patchRecipe = {
         "id": document.querySelector('#modal-recipe-id').value,
         "recipeTitle": document.querySelector('#recipe-name').value,
         "recipeBody": document.querySelector('#recipe-body').value,
-        "recipeIngredients": document.querySelector('#recipe-ingredients').value,
     };
 
     // Send a PATCH request to the server to save or update the recipe
@@ -116,15 +109,12 @@ async function saveRecipe() {
  * Asynchronous function to handle the deletion of a recipe.
  */
 async function deleteRecipe() {
-    console.log("deleteRecipe()");
     
     // Build JSON object for the recipe to be deleted
-    console.log(document.querySelector('#delete-modal-recipe-id').value)
     const deleteRecipe = {
         "id": parseInt(document.querySelector('#delete-modal-recipe-id').value),
         "recipeTitle": document.querySelector('#delete-recipe-name').value,
         "recipeBody": document.querySelector('#delete-recipe-body').value,
-        "recipeIngredients": document.querySelector('#delete-recipe-ingredients').value,
     };
 
     // Send a DELETE request to the server
@@ -179,7 +169,6 @@ document.querySelector('#createRecipeButton').addEventListener('click', function
     closeButton.click();
     const ingredientsInputs = document.querySelectorAll('#ingredientFields input');
     ingredients = Array.from(ingredientsInputs).map(input => input.value).join(', ');
-    console.log(ingredients + "-------- fra input fields");
     router.navigate(`/createRecipe/`);
     });
 }

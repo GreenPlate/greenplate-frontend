@@ -6,13 +6,15 @@ const URL=API_URL+"/stores/foodwaste"
 const URL2=API_URL+"/stores/clearance"
 export let selectedCards = [];
 let pageSize = 8;
-let sortColumn = 'description';
-let sortDirection = 'desc';
-let queryString;
+let minPrice = 0;
+let maxPrice = 1000;
 let isInitialized = false;
 let selectedFilter=" ";
+let sortvalue=" ";
 let storeId; 
 let page=0;
+let filteredOffersList = [];
+let offersList = [];
 
 let totalPages;
 export async function initOffers(match){
@@ -24,6 +26,7 @@ export async function initOffers(match){
         document.querySelector('#pagination').addEventListener('click', handlePaginationClick)       
       }
     getOffers(page);
+    setupOffcanvas();
     const offcanvas = document.querySelector('.offcanvas');
     offcanvas.classList.add('visible');
     document.querySelector('#canvas-hover').addEventListener('mouseover', function () {
@@ -37,22 +40,59 @@ export async function initOffers(match){
     selectedCards = [];
     cardsToCanvas(storeData);
     document.querySelector('#recipe-button').addEventListener('click', createRecipe)
+    document.querySelector('#save-shop-list').addEventListener('click', saveShoppingList)
     document.querySelector('#close-canvas-button').addEventListener('click', function () {
         visibilityToggle(false);
     });
+   
 }
-async function getOffers(pageNumber) { 
-     
-    pageSize=8;
-    document.querySelector("#offer-cards").style.visibility = "visible"
-    const offersList= await fetch(URL2+"?id="+storeId,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
-    totalPages=Math.ceil(offersList.length / pageSize);
-    const startIndex = (pageNumber) * pageSize;
-        const endIndex = startIndex + pageSize;
-        const offers = offersList.slice(startIndex, endIndex);  
-        const offersRow = offers.map(offer => {
-        const imgSrc = offer.image ? offer.image : '../../images/PlaceholderProductImage.jpg';
 
+async function getOffers(pageNumber,filteredOffersList) {
+    const pageSize = 8;
+    const offerCardsContainer = document.querySelector("#offer-cards");
+
+    offerCardsContainer.style.visibility = "visible";
+    if(filteredOffersList){
+                offersList=filteredOffersList
+            }else{
+            offersList= await fetch(URL2+"?id="+storeId,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))//.then(data=>data.offers) //tilføjet sidste .then
+            }   
+
+    const { minPrice, maxPrice } = calculateMinMaxPrice(offersList);
+
+    console.log("minimum pris: " + minPrice);
+    console.log("maximum pris: " + maxPrice);
+
+    const countOffers = offersList.length;
+    console.log("no. of Offers: " + countOffers);
+
+    const totalPages = Math.ceil(countOffers / pageSize);
+    const offers = getPaginatedOffers(offersList, pageNumber, pageSize);
+
+    const offersRow = createOffersRow(offers);
+    offerCardsContainer.innerHTML = sanitizeStringWithTableRows(offersRow);
+
+    addEventListeners(offers);
+
+    displayPagination(totalPages, pageNumber);
+}
+
+function calculateMinMaxPrice(offersList) {
+    const newPrices = offersList.map(offer => offer.newPrice);
+    const minPrice = Math.min(...newPrices);
+    const maxPrice = Math.max(...newPrices);
+    return { minPrice, maxPrice };
+}
+
+function getPaginatedOffers(offersList, pageNumber, pageSize) {
+    const startIndex = pageNumber * pageSize;
+    const endIndex = startIndex + pageSize;
+    return offersList.slice(startIndex, endIndex);
+}
+
+function createOffersRow(offers) {
+    return offers.map(offer => {
+        const imgSrc = offer.image ? offer.image : '../../images/PlaceholderProductImage.jpg';
         return `
             <div class="card mx-2 mt-2 d-flex align-items-center  justify-content-center shadow-sm p-3 mb-5 bg-body-tertiary rounded" style="width: 18rem">
                 <div class="col-md-4 d-flex align-items-center  justify-content-center">
@@ -74,19 +114,25 @@ async function getOffers(pageNumber) {
                     </div>
                 </div>
             </div>
-</div>`    
-}).join("");
-    document.querySelector("#offer-cards").innerHTML=sanitizeStringWithTableRows(offersRow);    
+</div>`    ;
+    }).join("");
+}
+
+function addEventListeners(offers) {
+    const offerCardsContainer = document.querySelector("#offer-cards");
+
     document.body.addEventListener('change', function (event) {
         const target = event.target;
         if (target.classList.contains("form-check-input")) {
             handleCheckboxChange(target, offers);
         }
     });
-    document.querySelector("#offer-cards").addEventListener('click', function (event) {
+
+    offerCardsContainer.addEventListener('click', function (event) {
         const clickedElement = event.target;
         const card = clickedElement.closest('.card');
         const checkbox = clickedElement.closest('.form-check-input');
+
         if (checkbox) {
             handleCheckboxChange(checkbox, offers);
         } else if (card) {
@@ -99,10 +145,10 @@ async function getOffers(pageNumber) {
             }
         }
     });
-   
-   displayPagination(totalPages,pageNumber)
 
+    document.querySelector("#searchselection").addEventListener("click", searchAndSort);
 }
+
 
 function handleCheckboxChange(checkbox, offers) {
     const card = checkbox.parentElement.parentElement.parentElement;
@@ -138,7 +184,6 @@ async function cardsToCanvas(storeData){
         </div>
     `).join("")
     document.querySelector('#store_data').innerHTML = sanitizeStringWithTableRows(store);
-    
     if(selectedCards.length >= 3){
         document.querySelector('#placeholdertext').innerHTML = ""
     }
@@ -156,6 +201,15 @@ async function cardsToCanvas(storeData){
         </div>
     `}).join("");
     document.querySelector('#canvas-cards').innerHTML = sanitizeStringWithTableRows(cards);
+    const modal_data = selectedCards.map((content) => { return`
+        <div class="container">
+            <div class="row justify-content-center">
+            <div class="col text-truncate text-start" style="max-width: 60%">${content.description}</div>
+            <div class="col text-center" style="max-width: 25%">${content.newPrice}</div>
+            </div>
+        </div>    
+    `}).join("");
+    document.querySelector('#shopping-modal-body').innerHTML = sanitizer(modal_data);
     if(!selectedCards.length == 0){
         const totalPriceSectionExists = document.querySelector('#canvas-cards').innerHTML.includes('Total pris');
         const totalPrice = selectedCards.reduce((sum, card) => sum + parseFloat(card.newPrice), 0);
@@ -228,14 +282,21 @@ function userAuthenticated(){
         return;
     }
     document.querySelector('#recipe-button').classList.remove("invisible");
+    document.querySelector('#shoplist-button').classList.remove("invisible");
 }
 
-function setupOffcanvasButton(){
-  const filterbutton=` <b class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasfilters" aria-controls="offcanvasExample">
+function setupOffcanvas(){
+  const filterbutton=` <b class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvassorts" aria-controls="offcanvasExample">
   filtre 
-</b> <span> Valgt filter: ${selectedFilter} </span>
+</b> 
 `
-document.querySelector("#filters").innerHTML=sanitizeStringWithTableRows(filterbutton)
+const priceRange=`<label for="from-price" class="form-label">minimum pris:${minPrice}</label>
+<input type="range" class="form-range" min="${minPrice}" max="${maxPrice}" step="0.5" id="from-price" value="${minPrice}">
+
+<label for="to-price" class="form-label">maximum pris: ${maxPrice}</label>
+<input type="range" class="form-range" min="${minPrice}" max="${maxPrice}" step="0.5" id="to-price" value="${maxPrice}">`
+document.querySelector("#sorts").innerHTML=sanitizeStringWithTableRows(filterbutton)
+document.querySelector("#range-value").innerHTML=sanitizeStringWithTableRows(priceRange)
 }
 
 function displayPagination(totalPages, currentPage) {
@@ -266,3 +327,127 @@ function handlePaginationClick(evt) {
       getOffers(page);
     }
   }
+
+function saveShoppingList(){
+    if(selectedCards.length < 1){
+        document.querySelector('#error-msg-shoplist').innerHTML = "Vælg mindst 1 produkt.";
+        return;
+    }
+    else{
+        const requestBody = {
+            "offers": selectedCards
+        }
+        document.querySelector('#close-list-inside').click()
+        fetch(API_URL+"/shopping-list/save-shopping-list", makeOptions("POST", requestBody, true)).then(r =>handleHttpErrors(r))
+        router.navigate("/profile")
+    }
+}  
+//     function setFilters() {
+//     let filteredOffersList = offersList;
+
+//     function applyFilters() {
+//         const searchInput = document.querySelector("#search-input").value;
+//         const sortInput = document.querySelector("#sorting-input").value;
+//         const fromPrice = document.querySelector("#from-price").value;
+//         const toPrice = document.querySelector("#to-price").value;
+
+//         if (!Array.isArray(offersList)) {
+//             console.error("Error: 'offersList' is not an array.");
+//             console.error("Value of 'offersList':", offersList);
+//             return;
+//         }
+
+//         const preFilter = offersList.filter(offer => offer.newPrice >= fromPrice && offer.newPrice <= toPrice);
+
+//         if (searchInput !== "") {
+//             selectedFilter = searchInput;
+//             filteredOffersList = preFilter.filter(offer => offer.description.includes(selectedFilter));
+//         }
+
+//         if (sortInput !== "" && searchInput === "") {
+//             sortValue = sortInput;
+//             filteredOffersList = preFilter.sort((a, b) => (a[sortValue] > b[sortValue]) ? 1 : -1);
+//         } else if (sortInput !== "" && searchInput !== "") {
+//             sortValue = sortInput;
+//             filteredOffersList = filteredOffersList.sort((a, b) => (a[sortValue] > b[sortValue]) ? 1 : -1);
+//         } else {
+//             filteredOffersList = preFilter;
+//         }
+//     }
+
+//     document.querySelector("#searchselection").addEventListener("click", function (event) {
+//         event.preventDefault();
+//         applyFilters();
+//     });
+
+//     // Initial application of filters
+//     applyFilters();
+
+//     return filteredOffersList;
+// }
+//    function setFilters(offersList){
+//   let  filteredofferslist=offersList
+//     var sortandsearch=[]
+//     document.querySelector("#searchselection").addEventListener("click", function (event) {
+//     event.preventDefault();
+//     const searchInput=document.querySelector("#search-input").value
+//     const sortInput=document.querySelector("#sorting-input").value
+//     const fromprice=document.querySelector("#from-price").value
+//     const toprice=document.querySelector("#to-price").value
+//     const prefilter=offersList.filter(offer=>offer.newPrice>=fromprice&&offer.newPrice<=toprice)
+//     if(searchInput!==""){
+//         selectedFilter=searchInput
+//         sortandsearch=prefilter.filter(offer=>offer.description.includes(selectedFilter))
+//     }
+
+//     if(sortInput!==""&&searchInput===""){
+//         sortvalue=sortInput
+//         filteredofferslist=prefilter.sort((a, b) => (a.sortvalue > b.sortvalue) ? 1 : -1)  
+//     }
+//     else if(sortInput!==""&&searchInput!==""){
+//         sortvalue=sortInput
+//         filteredofferslist=sortandsearch.sort((a, b) => (a.sortvalue > b.sortvalue) ? 1 : -1)  
+//     }
+//     else{
+//         filteredofferslist=prefilter
+//     }
+    
+//   });
+//   return filteredofferslist;
+// }
+function searchAndSort() {
+    const searchButton = document.getElementById('searchselection');
+    let sortedData=[];
+
+    searchButton.addEventListener('click', function () {
+        const searchInput = document.getElementById('search-input').value.toLowerCase();
+        const fromPrice = parseFloat(document.getElementById('from-price').value);
+        const toPrice = parseFloat(document.getElementById('to-price').value);
+        const sortingInput = document.getElementById('sorting-input').value;
+
+        const filteredData = offersList.filter(offer => {
+            const meetsPriceCriteria = offer.newPrice >= fromPrice && offer.newPrice <= toPrice;
+            const meetsSearchCriteria = searchInput === '' || offer.description.toLowerCase().includes(searchInput);
+
+            return meetsPriceCriteria && meetsSearchCriteria;
+        });
+
+        //sortedData=[];
+        if (sortingInput !== '') {
+            sortedData = filteredData.sort((a, b) => {
+                if (a[sortingInput] > b[sortingInput]) return 1;
+                if (a[sortingInput] < b[sortingInput]) return -1;
+                return 0;
+            });
+        } else {
+            sortedData = filteredData;
+        }
+
+        // Use the sortedData for further processing, such as displaying results.
+        console.log(sortedData);
+        //filteredOffersList= sortedData.map(offer => offer);
+        getOffers(0, sortedData);
+       
+    });
+   
+}
