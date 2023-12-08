@@ -8,7 +8,7 @@ export function initLogin(match) {
 
 async function login() {
   event.preventDefault();
-  
+
   document.querySelector("#login-fail").innerText = "";
   const userNameInput = document.querySelector("#username");
   const passwordInput = document.querySelector("#password");
@@ -17,7 +17,6 @@ async function login() {
     username: userNameInput.value,
     password: passwordInput.value,
   };
-
 
   const options = {
     method: "POST",
@@ -55,6 +54,8 @@ export function logout() {
 }
 
 export function toggleLoginStatus(loggedIn) {
+  const navBar = document.querySelector(".navbar"); 
+  navBar.style.display = "block";
   document.querySelector("#login-container").style.display = loggedIn
     ? "none"
     : "block";
@@ -82,6 +83,5 @@ export function toggleLoginStatus(loggedIn) {
   for (var i = 0; i < userRoutes.length; i++) {
     userRoutes[i].style.display = isUser ? "block" : "none"; // or any other value you want
   }
-
-  //userRoutes.style.display = isUser ? 'block' : 'none';
+  userRoutes.style.display = isUser ? 'block' : 'none';
 }

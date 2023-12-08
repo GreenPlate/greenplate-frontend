@@ -11,7 +11,7 @@ import { initOffers } from "./pages/offers/offers.js";
 import { initRecipesOverview } from "./pages/recipes-overview/recipes-overview.js";
 import { initCreateRecipe } from "./pages/createRecipe/create-recipe.js";
 import { initDashboard } from "./pages/dashboard/dashboard.js";
-import { initProfile} from "./pages/profile/profile.js";
+import { initProfile } from "./pages/profile/profile.js";
 
 window.addEventListener("load", async () => {
   const templateHome = await loadHtml("./pages/home/home.html");
@@ -21,8 +21,12 @@ window.addEventListener("load", async () => {
   const templateLogin = await loadHtml("./pages/login/login.html");
   const templateFoodplan = await loadHtml("./pages/foodplan/foodplan.html");
   const templateOffers = await loadHtml("./pages/offers/offers.html");
-  const templateRecipesOverview = await loadHtml("./pages/recipes-overview/recipes-overview.html");
-  const templateCreateRecipe = await loadHtml("./pages/createRecipe/create-recipe.html");
+  const templateRecipesOverview = await loadHtml(
+    "./pages/recipes-overview/recipes-overview.html"
+  );
+  const templateCreateRecipe = await loadHtml(
+    "./pages/createRecipe/create-recipe.html"
+  );
   const templateDashboard = await loadHtml("./pages/dashboard/dashboard.html");
   const templateProfile = await loadHtml("./pages/profile/profile.html");
 
@@ -65,26 +69,26 @@ window.addEventListener("load", async () => {
         renderHtml(templateFoodplan, "content");
         initFoodplan();
       },
-      "/offers": (match)=>{
+      "/offers": (match) => {
         renderHtml(templateOffers, "content");
         initOffers(match);
       },
-      "/recipes-overview": ()=>{
+      "/recipes-overview": () => {
         renderHtml(templateRecipesOverview, "content");
         initRecipesOverview();
       },
-      "/create-recipe": ()=>{
+      "/create-recipe": () => {
         renderHtml(templateCreateRecipe, "content");
         initCreateRecipe();
       },
-      "/dashboard": ()=>{
+      "/dashboard": () => {
         renderHtml(templateDashboard, "content");
         initDashboard();
       },
-      "/profile": ()=>{
+      "/profile": () => {
         renderHtml(templateProfile, "content");
         initProfile();
-      }
+      },
     })
     .notFound(() => {
       renderHtml(templateNotFound, "content");

@@ -1,5 +1,10 @@
-import {API_URL} from "../../settings.js"
-import { handleHttpErrors, makeOptions, sanitizeStringWithTableRows, sanitizer } from "./../../utility.js"
+import { API_URL } from "../../settings.js";
+import {
+  handleHttpErrors,
+  makeOptions,
+  sanitizeStringWithTableRows,
+  sanitizer,
+} from "./../../utility.js";
 
 export async function initDashboard() {
   console.log("initDashboard()");
@@ -12,7 +17,10 @@ export async function initDashboard() {
 async function fetchZipCount() {
   // Replace with real fetch call
 
-  const zipCountArray = await fetch(API_URL + "/stores/countzipcodecalls", makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
+  const zipCountArray = await fetch(
+    API_URL + "/stores/countzipcodecalls",
+    makeOptions("GET", null, false)
+  ).then((r) => handleHttpErrors(r));
 
   const zipCountRows = zipCountArray
     .map(
@@ -62,8 +70,11 @@ function createZipCountChart(zipCountArray) {
 }
 
 async function fetchStoreCount() {
-  const storeCountArray = await fetch(API_URL + "/stores/countstorecalls", makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
-  
+  const storeCountArray = await fetch(
+    API_URL + "/stores/countstorecalls",
+    makeOptions("GET", null, false)
+  ).then((r) => handleHttpErrors(r));
+
   const storeCountRows = storeCountArray
     .map(
       (storeCount) => `
@@ -114,8 +125,11 @@ function createStoreChart(storeCountArray) {
 
 async function fetchProductCount() {
   // Replace with real fetch call
-  
-  const productCountArray = await fetch(API_URL + "/products/count", makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))
+
+  const productCountArray = await fetch(
+    API_URL + "/products/count",
+    makeOptions("GET", null, false)
+  ).then((r) => handleHttpErrors(r));
 
   const productCountRows = productCountArray
     .map(
