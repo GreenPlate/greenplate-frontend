@@ -33,13 +33,24 @@ async function fetchProfile() {
   document
     .querySelector("#change_user_data_btn")
     .addEventListener("click", changeUserData);
-  document.querySelector('#delete_data_user').addEventListener('click', deleteUserData);  
+  document
+    .querySelector("#delete_data_user")
+    .addEventListener("click", openDeleteModal);
+  document
+    .querySelector("#delete_user_btn")
+    .addEventListener("click", deleteUserData);
+}
+function openDeleteModal() {
+  document.querySelector("#delete-modal-trigger").click();
 }
 async function deleteUserData() {
-  try{
-  await fetch(URL1 + "/user-as-authenticated", makeOptions("DELETE", null, true)).then(handleHttpErrors);
-  }catch(error){
-  console.log(error);
+  try {
+    await fetch(
+      URL1 + "/user-as-authenticated",
+      makeOptions("DELETE", null, true)
+    ).then(handleHttpErrors);
+  } catch (error) {
+    console.log(error);
   }
   logout();
 }

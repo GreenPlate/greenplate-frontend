@@ -355,4 +355,53 @@
       </div>
     </div>
   </div>
+
+  <button
+    type="button"
+    class="btn btn-primary invisible"
+    data-bs-toggle="modal"
+    data-bs-target="#delete-modal-user"
+    id="delete-modal-trigger"
+  ></button>
+  <div
+    class="modal fade"
+    id="delete-modal-user"
+    tabindex="-1"
+    aria-labelledby="delete-modal-label"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="delete-modal-label">Slet Bruger</h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body" id="delete-modal-body">
+          Vil du slette din profil?
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Fortryd
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            data-bs-dismiss="modal"
+            id="delete_user_btn"
+          >
+            Slet bruger
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
