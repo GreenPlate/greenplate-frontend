@@ -1,2 +1,1 @@
-export async function initHome(){
-}
+export async function initHome() {}

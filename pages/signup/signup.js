@@ -22,7 +22,9 @@ async function signup() {
   const email = sanitizer(document.querySelector("#input-email").value);
   const username = sanitizer(document.querySelector("#input-username").value);
   const password = sanitizer(document.querySelector("#input-password").value);
-  const passwordCheck = sanitizer(document.querySelector("#input-password2").value);
+  const passwordCheck = sanitizer(
+    document.querySelector("#input-password2").value
+  );
 
   if (
     !isSignupValid(
