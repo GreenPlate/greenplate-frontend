@@ -6,8 +6,8 @@ const URL=API_URL+"/stores/foodwaste"
 const URL2=API_URL+"/stores/clearance"
 export let selectedCards = [];
 let pageSize = 8;
-let minPrice = 0;
-let maxPrice = 1000;
+let minPrice
+let maxPrice 
 let isInitialized = false;
 let selectedFilter=" ";
 let sortvalue=" ";
@@ -26,7 +26,7 @@ export async function initOffers(match){
         document.querySelector('#pagination').addEventListener('click', handlePaginationClick)       
       }
     getOffers(page);
-    setupOffcanvas();
+   setupOffcanvas();
     const offcanvas = document.querySelector('.offcanvas');
     offcanvas.classList.add('visible');
     document.querySelector('#canvas-hover').addEventListener('mouseover', function () {
@@ -45,10 +45,11 @@ export async function initOffers(match){
         visibilityToggle(false);
     });
     document.querySelector("#searchselection").addEventListener("click", searchAndSort);
+   
 }
 
 async function getOffers(pageNumber,searchOffersList) {
-    const pageSize = 8;
+     pageSize = 8;
     const offerCardsContainer = document.querySelector("#offer-cards");
 
     offerCardsContainer.style.visibility = "visible";
@@ -57,11 +58,17 @@ async function getOffers(pageNumber,searchOffersList) {
             }else{
             offersList= await fetch(URL2+"?id="+storeId,makeOptions("GET", null, false)).then(r =>handleHttpErrors(r))//.then(data=>data.offers) //tilføjet sidste .then
             filteredOffersList=offersList.map(offer => offer);
+            const newPrices = offersList.map(offer => offer.newPrice);
+            minPrice = Math.min(...newPrices);
+            maxPrice = Math.max(...newPrices);
+            setupOffcanvas();
+          //searchAndSort();
         }   
 
-    const { minPrice, maxPrice } = calculateMinMaxPrice(offersList);
+  //  const { minPrice, maxPrice } = calculateMinMaxPrice(offersList);
+    
     const countOffers = offersList.length;
-    const totalPages = Math.ceil(countOffers / pageSize);
+    totalPages = Math.ceil(countOffers / pageSize);
     const offers = getPaginatedOffers(offersList, pageNumber, pageSize);
 
     const offersRow = createOffersRow(offers);
@@ -74,8 +81,8 @@ async function getOffers(pageNumber,searchOffersList) {
 
 function calculateMinMaxPrice(offersList) {
     const newPrices = offersList.map(offer => offer.newPrice);
-    const minPrice = Math.min(...newPrices);
-    const maxPrice = Math.max(...newPrices);
+    minPrice = Math.min(...newPrices);
+     maxPrice = Math.max(...newPrices);
     return { minPrice, maxPrice };
 }
 
@@ -276,20 +283,37 @@ function userAuthenticated(){
     document.querySelector('#recipe-button').classList.remove("invisible");
     document.querySelector('#shoplist-button').classList.remove("invisible");
 }
+function setupOffcanvas() {
+    const filterbutton = `<b class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvassorts" aria-controls="offcanvasExample">
+    filtre 
+  </b> 
+  `;
+    const priceRange = `<label for="from-price" class="form-label">minimum pris: <span id="min-price">${minPrice}</span></label>
+    <input type="range" class="form-range" min="${minPrice}" max="${maxPrice}" step="0.5" id="from-price" value="${minPrice}">
+    
+    <label for="to-price" class="form-label">maximum pris: <span id="max-price">${maxPrice}</span></label>
+    <input type="range" class="form-range" min="${minPrice}" max="${maxPrice}" step="0.5" id="to-price" value="${maxPrice}">`;
 
-function setupOffcanvas(){
-  const filterbutton=` <b class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvassorts" aria-controls="offcanvasExample">
-  filtre 
-</b> 
-`
-const priceRange=`<label for="from-price" class="form-label">minimum pris:${minPrice}</label>
-<input type="range" class="form-range" min="${minPrice}" max="${maxPrice}" step="0.5" id="from-price" value="${minPrice}">
+    document.querySelector("#sorts").innerHTML = sanitizeStringWithTableRows(filterbutton);
+    document.querySelector("#range-value").innerHTML = sanitizeStringWithTableRows(priceRange);
 
-<label for="to-price" class="form-label">maximum pris: ${maxPrice}</label>
-<input type="range" class="form-range" min="${minPrice}" max="${maxPrice}" step="0.5" id="to-price" value="${maxPrice}">`
-document.querySelector("#sorts").innerHTML=sanitizeStringWithTableRows(filterbutton)
-document.querySelector("#range-value").innerHTML=sanitizeStringWithTableRows(priceRange)
+    // Add event listeners to the range sliders
+    const fromPriceInput = document.getElementById('from-price');
+    const toPriceInput = document.getElementById('to-price');
+
+    fromPriceInput.addEventListener('input', updatePriceValues);
+    toPriceInput.addEventListener('input', updatePriceValues);
 }
+
+function updatePriceValues() {
+    const minPriceValue = document.getElementById('from-price').value;
+    const maxPriceValue = document.getElementById('to-price').value;
+
+    document.getElementById('min-price').textContent = minPriceValue;
+    document.getElementById('max-price').textContent = maxPriceValue;
+}
+
+
 
 function displayPagination(totalPages, currentPage) {
     let paginationHtml = '';
@@ -334,87 +358,21 @@ async function saveShoppingList(){
         router.navigate("/profile")
     }
 }  
-//     function setFilters() {
-//     let filteredOffersList = offersList;
 
-//     function applyFilters() {
-//         const searchInput = document.querySelector("#search-input").value;
-//         const sortInput = document.querySelector("#sorting-input").value;
-//         const fromPrice = document.querySelector("#from-price").value;
-//         const toPrice = document.querySelector("#to-price").value;
-
-//         if (!Array.isArray(offersList)) {
-//             console.error("Error: 'offersList' is not an array.");
-//             console.error("Value of 'offersList':", offersList);
-//             return;
-//         }
-
-//         const preFilter = offersList.filter(offer => offer.newPrice >= fromPrice && offer.newPrice <= toPrice);
-
-//         if (searchInput !== "") {
-//             selectedFilter = searchInput;
-//             filteredOffersList = preFilter.filter(offer => offer.description.includes(selectedFilter));
-//         }
-
-//         if (sortInput !== "" && searchInput === "") {
-//             sortValue = sortInput;
-//             filteredOffersList = preFilter.sort((a, b) => (a[sortValue] > b[sortValue]) ? 1 : -1);
-//         } else if (sortInput !== "" && searchInput !== "") {
-//             sortValue = sortInput;
-//             filteredOffersList = filteredOffersList.sort((a, b) => (a[sortValue] > b[sortValue]) ? 1 : -1);
-//         } else {
-//             filteredOffersList = preFilter;
-//         }
-//     }
-
-//     document.querySelector("#searchselection").addEventListener("click", function (event) {
-//         event.preventDefault();
-//         applyFilters();
-//     });
-
-//     // Initial application of filters
-//     applyFilters();
-
-//     return filteredOffersList;
-// }
-//    function setFilters(offersList){
-//   let  filteredofferslist=offersList
-//     var sortandsearch=[]
-//     document.querySelector("#searchselection").addEventListener("click", function (event) {
-//     event.preventDefault();
-//     const searchInput=document.querySelector("#search-input").value
-//     const sortInput=document.querySelector("#sorting-input").value
-//     const fromprice=document.querySelector("#from-price").value
-//     const toprice=document.querySelector("#to-price").value
-//     const prefilter=offersList.filter(offer=>offer.newPrice>=fromprice&&offer.newPrice<=toprice)
-//     if(searchInput!==""){
-//         selectedFilter=searchInput
-//         sortandsearch=prefilter.filter(offer=>offer.description.includes(selectedFilter))
-//     }
-
-//     if(sortInput!==""&&searchInput===""){
-//         sortvalue=sortInput
-//         filteredofferslist=prefilter.sort((a, b) => (a.sortvalue > b.sortvalue) ? 1 : -1)  
-//     }
-//     else if(sortInput!==""&&searchInput!==""){
-//         sortvalue=sortInput
-//         filteredofferslist=sortandsearch.sort((a, b) => (a.sortvalue > b.sortvalue) ? 1 : -1)  
-//     }
-//     else{
-//         filteredofferslist=prefilter
-//     }
-    
-//   });
-//   return filteredofferslist;
-// }
 function searchAndSort() {
-  //  const searchButton = document.getElementById('searchselection');
+ 
+  const selectminprice = document.querySelector('#from-price');
+   const selectmaxprice = document.querySelector('#to-price');
     let sortedData=[];
     var filteredData=[];
-  //  searchButton.addEventListener('click', function () {
+    var fromPrice=selectminprice.value;
+    var toPrice=selectmaxprice.value;
+ 
+       
+
         const searchInput = document.getElementById('search-input').value.toLowerCase();
-        const fromPrice = parseFloat(document.getElementById('from-price').value);
-        const toPrice = parseFloat(document.getElementById('to-price').value);
+         fromPrice = parseFloat(selectminprice.value);
+        toPrice = parseFloat(selectmaxprice.value);
         const sortingInput = document.getElementById('sorting-input').value;
         if(searchInput!==""){
          filteredData = offersList.filter(offer => {
@@ -429,7 +387,7 @@ function searchAndSort() {
             });
         }
 
-        //sortedData=[];
+        sortedData=[];
         if (sortingInput !== '') {
             sortedData = filteredData.sort((a, b) => {
                 if (a[sortingInput] > b[sortingInput]) return 1;
@@ -445,6 +403,6 @@ function searchAndSort() {
         //filteredOffersList= sortedData.map(offer => offer);
         getOffers(0, sortedData);
        
-  //  });
+ 
    
 }
