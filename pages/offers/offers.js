@@ -18,9 +18,10 @@ let storeId;
 let page = 0;
 let filteredOffersList = [];
 let offersList = [];
-
 let totalPages;
 export async function initOffers(match) {
+  selectedCards = [];
+  showSpinner();
   page = 0;
   userAuthenticated();
   storeId = match.params.storeid;
@@ -82,6 +83,7 @@ async function getOffers(pageNumber, searchOffersList) {
     minPrice = Math.min(...newPrices);
     maxPrice = Math.max(...newPrices);
     setupOffcanvas();
+    hideSpinner();
     //searchAndSort();
   }
 
@@ -90,7 +92,6 @@ async function getOffers(pageNumber, searchOffersList) {
   const countOffers = offersList.length;
   totalPages = Math.ceil(countOffers / pageSize);
   const offers = getPaginatedOffers(offersList, pageNumber, pageSize);
-
   const offersRow = createOffersRow(offers);
   offerCardsContainer.innerHTML = sanitizeStringWithTableRows(offersRow);
 
@@ -297,7 +298,7 @@ function getBrandLogo(brand) {
     case "foetex":
       return "../../images/foetex.png";
     case "bilka":
-      return "./path/to/bilka.png";
+      return "../../images/bilka.png";
   }
 }
 function toggleCanvasOn() {
@@ -468,7 +469,16 @@ function searchAndSort() {
   }
 
   // Use the sortedData for further processing, such as displaying results.
-  console.log(sortedData);
   //filteredOffersList= sortedData.map(offer => offer);
   getOffers(0, sortedData);
+}
+
+function showSpinner() {
+  var spinner = document.getElementById("spinner");
+  spinner.style.display = "block";
+}
+
+function hideSpinner() {
+  var spinner = document.getElementById("spinner");
+  spinner.style.display = "none";
 }
