@@ -9,7 +9,6 @@ import { selectedCards } from "../offers/offers.js";
 
 const URL = API_URL + "/recipes";
 export async function initFoodplan() {
-  console.log(selectedCards);
   fetchRecipe(selectedCards);
   showSpinner();
 }
@@ -47,7 +46,6 @@ async function fetchRecipe(selectedCards) {
     recipeBody: data.answer,
     offers: selectedCards,
   };
-
   document
     .querySelector("#save-recipe-db")
     .addEventListener("click", () => saveRecipe(recipeRequest));
@@ -65,10 +63,10 @@ function selectedCardsToIngredients(selectedCards) {
   const ingredients = selectedCards.map((card) => card.description);
   return ingredients;
 }
-function saveRecipe(recipeRequest) {
+async function saveRecipe(recipeRequest) {
   document.querySelector("#inside-close").click();
   try {
-    fetch(URL + "/save-recipe", makeOptions("POST", recipeRequest, true)).then(
+    await fetch(URL + "/save-recipe", makeOptions("POST", recipeRequest, true)).then(
       (r) => handleHttpErrors(r)
     );
   } catch (error) {

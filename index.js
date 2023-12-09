@@ -36,7 +36,7 @@ window.addEventListener("load", async () => {
 
   const router = new Navigo("/", { hash: true });
   window.router = router;
-
+  let forceReload = false;  
   router
     .hooks({
       before(done, match) {
