@@ -4,11 +4,16 @@ import {
   makeOptions,
   sanitizeStringWithTableRows,
 } from "./../../utility.js";
+import { selectedCards } from "../offers/offers.js";
 
 export let storeData = [];
 
 const URL = API_URL + "/stores";
 export async function initStores() {
+  if(selectedCards.length !== 0){
+    history.replaceState(null, null, "#/stores");
+    location.reload();
+  }
   document.querySelector("#submit-zip").addEventListener("click", () => {
     showSpinner();
     getStores(document.querySelector("#zipcode-input").value);
@@ -100,6 +105,6 @@ function getBrandLogo(brand) {
     case "foetex":
       return "../../images/foetex.png";
     case "bilka":
-      return "./path/to/bilka.png";
+      return "../../images/bilka.png";
   }
 }
