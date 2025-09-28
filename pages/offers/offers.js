@@ -123,7 +123,7 @@ function createOffersRow(offers) {
             <div class="card mx-2 mt-2 d-flex align-items-center  justify-content-center shadow-sm p-3 mb-5 bg-body-tertiary rounded" style="width: 18rem">
                 <div class="col-md-4 d-flex align-items-center  justify-content-center">
                     <img src="${imgSrc}" class="card-img-top" onerror="this.src='../../images/PlaceholderProductImage.jpg';" style="width: 17rem; height: 150px; overflow: ignore;">
-                </div>    
+                </div>
                 <div class="card-body">
                     <div class="h-25">
                         <h5 class="card-title">${offer.description}</h5>
@@ -155,6 +155,7 @@ function addEventListeners(offers) {
     }
   });
 
+
   offerCardsContainer.addEventListener("click", function (event) {
     const clickedElement = event.target;
     const card = clickedElement.closest(".card");
@@ -171,14 +172,15 @@ function addEventListeners(offers) {
       return;
     }
     if (checkbox) {
-      handleCheckboxChange(checkbox, offers);
+     // handleCheckboxChange(checkbox, offers);
+     return;
     } else if (card) {
       const checkboxInCard = card.querySelector(".form-check-input");
       if (checkboxInCard) {
         checkboxInCard.checked = !checkboxInCard.checked;
-        const changeEvent = new Event("change");
+        const changeEvent = new Event("change", { bubbles: true });
         checkboxInCard.dispatchEvent(changeEvent);
-        handleCheckboxChange(checkboxInCard, offers);
+       // handleCheckboxChange(checkboxInCard, offers);
       }
     }
   });
@@ -229,7 +231,7 @@ async function cardsToCanvas(storeData) {
         ? card.image
         : "../../images/PlaceholderProductImage.jpg";
       return `
-        <div class="row p-2">   
+        <div class="row p-2">
             <div class="col text-start" style="white-space: nowrap; max-width: 70%; overflow: hidden; text-overflow: ellipsis;">${card.description}</div>
             <div class="col" style="max-width: 25%;">${card.newPrice}</div>
             <button class="col btn-remove modal-dialog-centered justify-content-center" data-index="${card.ean}" style="max-width: 5%; border: solid 1px rgb(255, 82, 82); color:grey; background-color:white;">X</button>
@@ -247,7 +249,7 @@ async function cardsToCanvas(storeData) {
             <div class="col text-truncate text-start" style="max-width: 60%">${content.description}</div>
             <div class="col text-center" style="max-width: 25%">${content.newPrice}</div>
             </div>
-        </div>    
+        </div>
     `;
     })
     .join("");
@@ -338,12 +340,12 @@ function userAuthenticated() {
 }
 function setupOffcanvas() {
   const filterbutton = `<b class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvassorts" aria-controls="offcanvasExample">
-    filtre 
-  </b> 
+    filtre
+  </b>
   `;
   const priceRange = `<label for="from-price" class="form-label">minimum pris: <span id="min-price">${minPrice}</span></label>
     <input type="range" class="form-range" min="${minPrice}" max="${maxPrice}" step="0.5" id="from-price" value="${minPrice}">
-    
+
     <label for="to-price" class="form-label">maximum pris: <span id="max-price">${maxPrice}</span></label>
     <input type="range" class="form-range" min="${minPrice}" max="${maxPrice}" step="0.5" id="to-price" value="${maxPrice}">`;
 
